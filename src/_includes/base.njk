@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% if title %}{{ title }} — {% endif %}Daniel Newcome</title>
+  <meta name="description" content="{% if description %}{{ description }}{% else %}Daniel Newcome — Software & Electrical Engineer, San Francisco.{% endif %}">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="alternate" type="application/rss+xml" title="Daniel Newcome" href="https://dnuke.com/blog/feed.xml">
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="logo">Daniel <span>Newcome</span></a>
+    <ul>
+      <li><a href="/#about">About</a></li>
+      <li><a href="/#projects">Projects</a></li>
+      <li><a href="/#writing">Writing</a></li>
+      <li><a href="/blog/" class="{% if '/blog' in page.url %}active{% endif %}">Blog</a></li>
+      <li><a href="/#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  {{ content | safe }}
+
+  <footer>
+    <span class="logo" style="font-size:0.95rem;">Daniel <span>Newcome</span></span>
+    <span>San Francisco, CA</span>
+    <span>&copy; 2025 Daniel Newcome</span>
+  </footer>
+
+</body>
+</html>

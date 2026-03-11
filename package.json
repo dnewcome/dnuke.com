@@ -1,0 +1,14 @@
+{
+  "name": "dnuke-com",
+  "version": "1.0.0",
+  "description": "dnuke.com — Daniel Newcome personal site",
+  "scripts": {
+    "build": "eleventy",
+    "serve": "eleventy --serve",
+    "watch": "eleventy --watch",
+    "pdf": "eleventy && node scripts/pdf.js"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3.0.0"
+  }
+}

@@ -1,0 +1,283 @@
+---
+layout: base.njk
+title: Home
+---
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-handle">dnuke</div>
+  <h1>Daniel<br>Newcome<span class="dot">.</span></h1>
+  <div class="hero-role">Software &amp; Electrical Engineer &mdash; San Francisco, CA</div>
+  <p class="hero-tagline">
+    I build things at the intersection of software, hardware, and art.
+    Embedded systems, audio tools, creative code, and occasionally
+    something that blinks or makes noise.
+  </p>
+  <div class="hero-actions">
+    <a href="#projects" class="btn btn-primary">Projects</a>
+    <a href="/blog/" class="btn btn-outline">Blog</a>
+    <a href="/files/resume.pdf" class="btn btn-outline">Resume</a>
+  </div>
+  <div class="hero-links">
+    <a href="https://github.com/dnewcome">GitHub</a>
+    <a href="https://www.linkedin.com/in/dnewcome">LinkedIn</a>
+    <a href="mailto:dan@dnuke.com">Email</a>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ABOUT -->
+<section class="section" id="about">
+  <div class="section-label">About</div>
+  <h2>Who I Am</h2>
+  <div class="about-grid">
+    <div class="about-photo">
+      [ photo ]
+    </div>
+    <div class="about-text">
+      <p>
+        I'm a software engineer and electrical engineer based in San Francisco.
+        My work spans the full stack from bare-metal firmware to web applications,
+        with a particular interest in audio software, creative coding, and
+        hardware/software systems that connect the physical and digital.
+      </p>
+      <p>
+        I've worked across embedded systems, DSP, desktop applications, and the web.
+        I build tools, instruments, visualizers, and occasionally things that are
+        just for the sake of being interesting.
+      </p>
+      <p>
+        Outside of engineering I do sculpture, visual art, and music — those live
+        on separate sites. San Francisco has been home for a long time and I don't
+        plan on leaving.
+      </p>
+      <div class="sub-links">
+        <a href="https://dnuke.art">Art &amp; Sculpture &rarr;</a>
+        <a href="https://audiodestrukt.com">AudioDestrukt &rarr;</a>
+        <a href="/files/resume.pdf">Resume PDF &rarr;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- STACK -->
+<section class="section" id="stack">
+  <div class="section-label">Stack</div>
+  <h2>Skills &amp; Technologies</h2>
+  <div class="skill-groups">
+    <div>
+      <div class="skill-group-label">Hardware &amp; EE</div>
+      <div class="tags">
+        <span class="tag accent">Embedded C/C++</span>
+        <span class="tag accent">PCB Design</span>
+        <span class="tag accent">Microcontrollers</span>
+        <span class="tag accent">FPGA</span>
+        <span class="tag accent">Signal Processing</span>
+        <span class="tag accent">MIDI</span>
+        <span class="tag accent">Art-Net / DMX</span>
+        <span class="tag accent">KiCad</span>
+        <span class="tag accent">Oscilloscope</span>
+      </div>
+    </div>
+    <div>
+      <div class="skill-group-label">Languages</div>
+      <div class="tags">
+        <span class="tag">C</span>
+        <span class="tag">C++</span>
+        <span class="tag">JavaScript</span>
+        <span class="tag">Python</span>
+        <span class="tag">Rust</span>
+        <span class="tag">Bash</span>
+        <span class="tag">HTML/CSS</span>
+      </div>
+    </div>
+    <div>
+      <div class="skill-group-label">Platforms &amp; Tools</div>
+      <div class="tags">
+        <span class="tag">Linux</span>
+        <span class="tag">Node.js</span>
+        <span class="tag">JUCE</span>
+        <span class="tag">Blender</span>
+        <span class="tag">Git</span>
+        <span class="tag">WebAudio</span>
+        <span class="tag">VST3</span>
+        <span class="tag">WebGL</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- PROJECTS -->
+<section class="section" id="projects">
+  <div class="section-label">Work</div>
+  <h2>Projects</h2>
+  <div class="project-grid">
+
+    <div class="project-card">
+      <div class="project-name">Rip.wav / AudioDestrukt</div>
+      <div class="project-desc">
+        Live audio slicer VST3 plugin. Captures transients in real time into 16 playable slots.
+        Trigger via MIDI or click. Built with JUCE, free and open source.
+      </div>
+      <div class="project-tags">
+        <span class="tag">C++</span>
+        <span class="tag">JUCE</span>
+        <span class="tag">VST3</span>
+        <span class="tag">DSP</span>
+      </div>
+      <div class="project-links">
+        <a href="https://github.com/dnewcome/rt-slicer">GitHub &rarr;</a>
+        <a href="https://audiodestrukt.com">Site &rarr;</a>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-name">Art-Net Visualizer</div>
+      <div class="project-desc">
+        Real-time visualization tool for Art-Net lighting control data.
+        Listens on the network and renders DMX universe state.
+      </div>
+      <div class="project-tags">
+        <span class="tag">JavaScript</span>
+        <span class="tag">Art-Net</span>
+        <span class="tag">DMX</span>
+        <span class="tag">WebGL</span>
+      </div>
+      <div class="project-links">
+        <a href="https://github.com/dnewcome/artnet-visualizer">GitHub &rarr;</a>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-name">MMT-8 Modifications</div>
+      <div class="project-desc">
+        Hardware modifications and firmware work on the Oberheim MMT-8 MIDI step sequencer.
+        Reverse engineering, schematics, and custom code.
+      </div>
+      <div class="project-tags">
+        <span class="tag">Embedded C</span>
+        <span class="tag">MIDI</span>
+        <span class="tag">Hardware</span>
+        <span class="tag">Reverse Engineering</span>
+      </div>
+      <div class="project-links">
+        <a href="https://github.com/dnewcome/mmt8">GitHub &rarr;</a>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-name">Blender Art-Net UV</div>
+      <div class="project-desc">
+        Blender add-on that streams UV-mapped texture data over Art-Net for real-time
+        LED mapping and lighting design previsualization.
+      </div>
+      <div class="project-tags">
+        <span class="tag">Python</span>
+        <span class="tag">Blender</span>
+        <span class="tag">Art-Net</span>
+        <span class="tag">LED</span>
+      </div>
+      <div class="project-links">
+        <a href="https://github.com/dnewcome/blender-artnet-uv">GitHub &rarr;</a>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-name">Chord App</div>
+      <div class="project-desc">
+        Browser-based chord reference and music theory tool.
+        Interactive chord shapes and voicings for guitar and keyboard.
+      </div>
+      <div class="project-tags">
+        <span class="tag">JavaScript</span>
+        <span class="tag">WebAudio</span>
+        <span class="tag">Music Theory</span>
+      </div>
+      <div class="project-links">
+        <a href="https://github.com/dnewcome/chord-app">GitHub &rarr;</a>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-name">WavMulch</div>
+      <div class="project-desc">
+        Audio file processing utility. Batch operations on WAV files —
+        normalization, slicing, format conversion, and more.
+      </div>
+      <div class="project-tags">
+        <span class="tag">C</span>
+        <span class="tag">Audio</span>
+        <span class="tag">CLI</span>
+      </div>
+      <div class="project-links">
+        <a href="https://github.com/dnewcome/wavmulch">GitHub &rarr;</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- WRITING -->
+<section class="section" id="writing">
+  <div class="section-label">Writing</div>
+  <h2>Recent Posts</h2>
+  {% if collections.posts.length > 0 %}
+  <ul class="writing-list">
+    {% for post in collections.posts | limit(5) %}
+    <li class="writing-item">
+      <span class="writing-date">{{ post.date | dateFormat }}</span>
+      <span class="writing-title"><a href="{{ post.url }}">{{ post.data.title }}</a></span>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <ul class="writing-list">
+    <li class="writing-item">
+      <span class="writing-date">Coming soon</span>
+      <span class="writing-title" style="color:var(--muted);">Posts loading&hellip;</span>
+    </li>
+  </ul>
+  {% endif %}
+  <a href="/blog/" class="btn btn-outline">All posts &rarr;</a>
+</section>
+
+<hr class="divider">
+
+<!-- CONNECT -->
+<section class="section" id="contact">
+  <div class="section-label">Connect</div>
+  <h2>Get in Touch</h2>
+  <div class="social-grid">
+    <a href="https://github.com/dnewcome" class="social-link">
+      <span class="social-link-label">GitHub</span>
+      <span class="social-link-value">dnewcome</span>
+    </a>
+    <a href="https://www.linkedin.com/in/dnewcome" class="social-link">
+      <span class="social-link-label">LinkedIn</span>
+      <span class="social-link-value">dnewcome</span>
+    </a>
+    <a href="mailto:dan@dnuke.com" class="social-link">
+      <span class="social-link-label">Email</span>
+      <span class="social-link-value">dan@dnuke.com</span>
+    </a>
+    <a href="https://audiodestrukt.com" class="social-link">
+      <span class="social-link-label">Audio Project</span>
+      <span class="social-link-value">AudioDestrukt</span>
+    </a>
+    <a href="https://dnuke.art" class="social-link">
+      <span class="social-link-label">Art &amp; Sculpture</span>
+      <span class="social-link-value">dnuke.art</span>
+    </a>
+    <a href="/files/resume.pdf" class="social-link">
+      <span class="social-link-label">Resume</span>
+      <span class="social-link-value">PDF Download</span>
+    </a>
+  </div>
+</section>

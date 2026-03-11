@@ -1,0 +1,646 @@
+/* =========================================================
+   dnuke.com — Daniel Newcome
+   ========================================================= */
+
+:root {
+  --bg: #0a0a0a;
+  --surface: #121212;
+  --surface2: #1a1a1a;
+  --border: #242424;
+  --accent: #00e5ff;      /* electric cyan */
+  --accent2: #ff6b35;     /* warm orange */
+  --text: #ddd;
+  --muted: #666;
+  --white: #f0f0f0;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Courier New', Courier, monospace;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* =========================================================
+   NAV
+   ========================================================= */
+
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: rgba(10,10,10,0.96);
+  backdrop-filter: blur(8px);
+  z-index: 100;
+}
+
+.logo {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--white);
+  text-decoration: none;
+}
+
+.logo span { color: var(--accent); }
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 2rem;
+}
+
+nav ul li a {
+  color: var(--muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+nav ul li a:hover { color: var(--text); }
+nav ul li a.active { color: var(--accent); }
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.hero {
+  padding: 6rem 2rem 5rem;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.hero-handle {
+  display: inline-block;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 0.2rem 0.65rem;
+  margin-bottom: 1.75rem;
+}
+
+.hero h1 {
+  font-size: clamp(3.5rem, 9vw, 7rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+  color: var(--white);
+  margin-bottom: 1.5rem;
+}
+
+.hero h1 .dot { color: var(--accent2); }
+
+.hero-role {
+  font-size: 0.9rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.hero-tagline {
+  font-size: 1rem;
+  color: var(--text);
+  max-width: 540px;
+  margin-bottom: 2.5rem;
+  line-height: 1.8;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.7rem 1.6rem;
+  font-family: inherit;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #000;
+}
+
+.btn-primary:hover { background: #33eeff; text-decoration: none; }
+
+.btn-outline {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn-outline:hover { border-color: var(--text); text-decoration: none; }
+
+.hero-links {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.hero-links a { color: var(--muted); }
+.hero-links a:hover { color: var(--text); text-decoration: none; }
+
+/* =========================================================
+   SECTION COMMONS
+   ========================================================= */
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.section {
+  padding: 5rem 2rem;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.section-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.75rem;
+}
+
+.section h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 2.5rem;
+  line-height: 1.1;
+}
+
+/* =========================================================
+   ABOUT
+   ========================================================= */
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+.about-photo {
+  aspect-ratio: 1;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.about-text p {
+  font-size: 0.9rem;
+  color: var(--text);
+  margin-bottom: 1.25rem;
+  line-height: 1.85;
+  max-width: 580px;
+}
+
+.about-text .sub-links {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* =========================================================
+   SKILLS / STACK
+   ========================================================= */
+
+.skill-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.skill-group-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag {
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.tag.accent {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* =========================================================
+   PROJECTS
+   ========================================================= */
+
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.project-card {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.project-card:hover {
+  border-color: #333;
+}
+
+.project-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 0.03em;
+}
+
+.project-desc {
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.7;
+  flex: 1;
+}
+
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.project-links {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 0.25rem;
+}
+
+.project-links a { color: var(--muted); }
+.project-links a:hover { color: var(--accent); text-decoration: none; }
+
+/* =========================================================
+   WRITING PREVIEW (landing page)
+   ========================================================= */
+
+.writing-list {
+  list-style: none;
+  margin-bottom: 2.5rem;
+}
+
+.writing-item {
+  border-bottom: 1px solid var(--border);
+  padding: 1.5rem 0;
+  display: flex;
+  gap: 2rem;
+  align-items: baseline;
+}
+
+.writing-item:first-child { padding-top: 0; }
+
+.writing-date {
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+  min-width: 100px;
+}
+
+.writing-title {
+  font-size: 0.95rem;
+  color: var(--white);
+  font-weight: 700;
+}
+
+.writing-title a { color: var(--white); }
+.writing-title a:hover { color: var(--accent); text-decoration: none; }
+
+/* =========================================================
+   CONNECT / SOCIALS
+   ========================================================= */
+
+.social-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.social-link {
+  border: 1px solid var(--border);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  text-decoration: none;
+  background: var(--surface);
+}
+
+.social-link:hover {
+  border-color: var(--accent);
+  text-decoration: none;
+}
+
+.social-link-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.social-link-value {
+  font-size: 0.85rem;
+  color: var(--white);
+  font-weight: 700;
+}
+
+/* =========================================================
+   BLOG INDEX
+   ========================================================= */
+
+.blog-container {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+}
+
+.page-title {
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 3rem;
+}
+
+.post-list { list-style: none; }
+
+.post-item {
+  border-bottom: 1px solid var(--border);
+  padding: 2rem 0;
+}
+
+.post-item:first-child { padding-top: 0; }
+
+.post-meta {
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.post-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
+}
+
+.post-title a { color: var(--white); }
+.post-title a:hover { color: var(--accent); text-decoration: none; }
+
+.post-excerpt {
+  font-size: 0.82rem;
+  color: var(--text);
+  margin-bottom: 0.75rem;
+  line-height: 1.75;
+}
+
+.post-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+/* =========================================================
+   PAGINATION
+   ========================================================= */
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 3rem;
+  font-size: 0.8rem;
+}
+
+.pagination a {
+  border: 1px solid var(--border);
+  padding: 0.5rem 1rem;
+  color: var(--text);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+}
+
+.pagination a:hover { border-color: var(--text); text-decoration: none; }
+.pagination .page-info { color: var(--muted); font-size: 0.65rem; letter-spacing: 0.12em; }
+.pagination .spacer { flex: 1; }
+
+/* =========================================================
+   SINGLE POST
+   ========================================================= */
+
+.post-single {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+}
+
+.post-header { margin-bottom: 3rem; }
+
+.post-header h1 {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.15;
+  margin-bottom: 0.75rem;
+}
+
+.post-body { font-size: 0.9rem; }
+
+.post-body h1, .post-body h2, .post-body h3 {
+  color: var(--white);
+  font-weight: 700;
+  margin: 2.25rem 0 0.75rem;
+}
+
+.post-body h1 { font-size: 1.4rem; }
+.post-body h2 { font-size: 1.2rem; }
+.post-body h3 { font-size: 1rem; }
+
+.post-body p {
+  color: var(--text);
+  margin-bottom: 1.25rem;
+  line-height: 1.85;
+}
+
+.post-body a { color: var(--accent); }
+
+.post-body strong { color: var(--white); }
+
+.post-body ul, .post-body ol {
+  margin: 0 0 1.25rem 1.5rem;
+  font-size: 0.9rem;
+  color: var(--text);
+  line-height: 1.8;
+}
+
+.post-body li { margin-bottom: 0.25rem; }
+
+.post-body pre {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 1.25rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  font-size: 0.78rem;
+  line-height: 1.65;
+}
+
+.post-body code {
+  font-family: 'Courier New', Courier, monospace;
+  color: var(--accent);
+  font-size: 0.85em;
+}
+
+.post-body pre code { color: var(--text); }
+
+.post-body blockquote {
+  border-left: 2px solid var(--accent);
+  padding-left: 1.25rem;
+  margin: 1.5rem 0;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.post-body img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.75rem 0;
+  border: 1px solid var(--border);
+}
+
+.post-nav {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 3rem;
+  margin-top: 3rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.72rem;
+  gap: 1rem;
+}
+
+.post-nav a {
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.post-nav a:hover { color: var(--text); text-decoration: none; }
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+footer {
+  border-top: 1px solid var(--border);
+  padding: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  max-width: 960px;
+  margin: 0 auto;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 700px) {
+  nav ul { display: none; }
+
+  .hero { padding: 4rem 1.5rem 3rem; }
+  .hero h1 { font-size: 3rem; }
+
+  .section { padding: 3.5rem 1.5rem; }
+
+  .about-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .about-photo {
+    width: 140px;
+    height: 140px;
+  }
+
+  .writing-item { flex-direction: column; gap: 0.4rem; }
+  .writing-date { min-width: auto; }
+
+  .blog-container { padding: 3rem 1.5rem; }
+  .post-single { padding: 3rem 1.5rem; }
+
+  footer { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+}
