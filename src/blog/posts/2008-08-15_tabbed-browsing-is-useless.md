@@ -1,0 +1,14 @@
+---
+title: "Tabbed Browsing is Useless"
+date: 2008-08-15T15:42:47-05:00
+---
+
+# Tabbed Browsing is Useless
+
+Well, the idea of tabbed browsing is good, it’s just the implementation that sucks.  Allow me to explain.  The idea of having several open web pages within a single application window is a great idea.  This solves the problem of having lots of browser application windows sucking up OS resources and cluttering the task bar with open application instances.  However, having tabs across the top (or bottom) of the application window doesn’t make that much sense really, especially as the number of open pages increases.  I’d argue that given the current shared memory implementations of most modern browsers, the case where one would have only 3-4 open pages would be adequately solved using several separate application instance windows.  IE and FF both share a lot of memory between open instances of the browser running as the same user or profile, so the load on the OS should be minimal, and the normal OS tabbing semantics works.  For the case where more than 4-5 pages are open, we start to see how the tabbing paradigm breaks down.  As the number of tabs increases, so does the time it takes to find the tab that you are looking for.  The tabs start showing less of the title text, exacerbating the findability issue.
+
+Now, to nitpick on browsers a bit.  Firefox, despite its status as the tabbed browsing pioneer, has a completely brain-dead implementation of tabbed pages.  You have to install a plugin to get what would be considered normal last-recently-used tabbing order.  Sure, you can rearrange the tabs on the tab bar to a different order, but I have never had any reason to want to do so in a situation that does LRU tab ordering, so why would I want to do this manual step when I shouldn’t even have to think about it ordinarily?
+
+Opera, on the other hand, has had tabbing correct from the start.  Their implementation is beautiful in a Mac-like feelgood usability way.  It starts from the ability to actually turn off the tabs!  Now before we panic about not knowing what pages we have open, remember that even with the tabs it was sort of a crap shoot if we had more than a few pages open.  Using the standard ctrl-tab shortcut brings up a nice list of open pages in a very readable and easy to scan list.  It is much easier for the eye to scan down a single column of text than to try to scan horizontally across a list of tabs containing partial text, especially if several pages from the same site are open.  Now for the real coup, shortcut-phobic users can use the mouse scroll wheel to move between open windows using a gesture that becomes second-nature to use.
+
+Unfortunately, lots of sites don’t work in Opera, and FF is just the best browser for many web 2.0 apps, so I fix my nitpicks using some plugins and tweaking.  I just think that such a basic usability point should be part of the core chrome of FF.
