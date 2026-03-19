@@ -3,6 +3,7 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy("src/images");
   eleventyConfig.addPassthroughCopy("src/files");
   eleventyConfig.addPassthroughCopy({ "dashboard.html": "dashboard.html" });
+  eleventyConfig.addPassthroughCopy({ "sessions-data.json": "sessions-data.json" });
 
   // Blog post collection — newest first
   eleventyConfig.addCollection("posts", function(collectionApi) {
