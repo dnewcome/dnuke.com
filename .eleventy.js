@@ -2,6 +2,7 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy("src/css");
   eleventyConfig.addPassthroughCopy("src/images");
   eleventyConfig.addPassthroughCopy("src/files");
+  eleventyConfig.addPassthroughCopy({ "dashboard.html": "dashboard.html" });
 
   // Blog post collection — newest first
   eleventyConfig.addCollection("posts", function(collectionApi) {

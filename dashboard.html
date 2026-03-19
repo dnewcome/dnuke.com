@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Session Dashboard</title>
+  <style>
+    :root {
+      --bg:      #0d0d14;
+      --surface: #16162a;
+      --border:  #2a2a42;
+      --text:    #f0f0ff;
+      --sub:     #c4c4e0;
+      --muted:   #8888aa;
+      --accent:  #7c5cfc;
+
+      --c-music:    #a855f7;
+      --c-games:    #22d3ee;
+      --c-web:      #34d399;
+      --c-ulauncher:#f59e0b;
+      --c-joplin:   #f472b6;
+      --c-ai:       #fb923c;
+      --c-hardware: #60a5fa;
+      --c-terminal: #4ade80;
+      --c-project:  #7c5cfc;
+      --c-other:    #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* ── HEADER ── */
+    header {
+      padding: 20px 28px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .stats-bar { display: flex; gap: 28px; }
+    .stat { display: flex; flex-direction: column; gap: 1px; }
+    .stat-value { font-size: 20px; font-weight: 700; color: var(--text); }
+    .stat-label { font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+
+    /* ── LAYOUT ── */
+    .layout {
+      display: grid;
+      grid-template-columns: 272px 1fr;
+      grid-template-rows: auto 1fr;
+      height: calc(100vh - 82px);
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      grid-row: 1 / 3;
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 18px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .panel-title {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    /* heatmap */
+    .heatmap-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+    }
+
+    .heatmap-cell {
+      aspect-ratio: 1;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: transform 0.1s, outline 0.1s;
+      outline: 2px solid transparent;
+    }
+
+    .heatmap-cell:hover { transform: scale(1.25); }
+    .heatmap-cell.active { outline-color: var(--text); }
+    .heatmap-level-0 { background: var(--border); }
+    .heatmap-level-1 { background: #3b1f6b; }
+    .heatmap-level-2 { background: #5b2fa0; }
+    .heatmap-level-3 { background: #7c45d4; }
+    .heatmap-level-4 { background: #9c63fc; }
+
+    /* theme bars */
+    .theme-bars { display: flex; flex-direction: column; gap: 5px; }
+
+    .theme-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+      padding: 3px 4px;
+      border-radius: 4px;
+      transition: background 0.1s;
+    }
+
+    .theme-bar-row:hover { background: var(--surface); }
+    .theme-bar-row.active { background: var(--surface); outline: 1px solid var(--border); }
+
+    .theme-bar-label {
+      flex: 0 0 128px;
+      font-size: 11px;
+      color: var(--sub);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .theme-bar-row.active .theme-bar-label { color: var(--text); }
+
+    .theme-bar-track {
+      flex: 1;
+      height: 5px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .theme-bar-fill { height: 100%; border-radius: 3px; }
+
+    .theme-bar-count {
+      flex: 0 0 22px;
+      text-align: right;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* project list */
+    .project-list { display: flex; flex-direction: column; gap: 2px; }
+
+    .project-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 6px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .project-row:hover { background: var(--surface); }
+    .project-row.active { background: var(--surface); outline: 1px solid var(--border); }
+
+    .project-name {
+      font-size: 12px;
+      color: var(--sub);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 175px;
+    }
+
+    .project-row.active .project-name { color: var(--text); }
+    .project-count { font-size: 11px; color: var(--muted); }
+
+    /* ── MAIN TOP BAR ── */
+    .main-top {
+      padding: 12px 22px 10px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .search-input {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 13px;
+      padding: 6px 12px;
+      border-radius: 4px;
+      width: 240px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .search-input:focus { border-color: var(--accent); }
+    .search-input::placeholder { color: var(--muted); }
+
+    .filter-chips { display: flex; gap: 6px; }
+
+    .chip {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      color: var(--sub);
+      background: transparent;
+      font-family: inherit;
+      transition: border-color 0.1s, color 0.1s;
+    }
+
+    .chip:hover { border-color: var(--muted); color: var(--text); }
+    .chip.active { border-color: var(--accent); color: var(--accent); }
+
+    .result-count {
+      margin-left: auto;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* ── SESSION LIST ── */
+    .session-list {
+      overflow-y: auto;
+      padding: 10px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .session-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 11px 14px;
+      display: grid;
+      grid-template-columns: 108px 1fr auto;
+      gap: 6px 14px;
+      align-items: start;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.1s;
+    }
+
+    .session-card:hover { border-color: var(--accent); background: #1a1a2e; }
+
+    .session-meta { display: flex; flex-direction: column; gap: 3px; }
+    .session-date { font-size: 11px; color: var(--muted); }
+    .session-project { font-size: 12px; font-weight: 600; color: var(--text); }
+    .session-duration { font-size: 11px; color: var(--muted); }
+
+    .session-body { min-width: 0; }
+
+    .session-prompt {
+      font-size: 12px;
+      color: var(--sub);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-height: 1.5;
+    }
+
+    .session-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 5px;
+    }
+
+    .theme-badge {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      white-space: nowrap;
+    }
+
+    .session-turns { font-size: 11px; color: var(--muted); }
+
+    .empty-state {
+      color: var(--sub);
+      text-align: center;
+      padding: 48px;
+      font-size: 12px;
+      line-height: 2;
+    }
+
+    /* ── PROJECT DETAIL PAGE ── */
+    .project-detail {
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .project-detail.visible { display: flex; }
+
+    .detail-header {
+      padding: 14px 22px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .back-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--sub);
+      font-family: inherit;
+      font-size: 12px;
+      padding: 5px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: border-color 0.1s, color 0.1s;
+    }
+
+    .back-btn:hover { border-color: var(--muted); color: var(--text); }
+
+    .detail-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .detail-badge { font-size: 11px; padding: 3px 10px; border-radius: 10px; }
+
+    .detail-meta { font-size: 12px; color: var(--muted); margin-left: auto; }
+
+    .detail-sessions {
+      overflow-y: auto;
+      padding: 12px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .detail-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 14px 16px;
+    }
+
+    .detail-card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .detail-card-date { font-size: 12px; color: var(--muted); }
+    .detail-card-dur  { font-size: 12px; color: var(--muted); }
+    .detail-card-turns { font-size: 12px; color: var(--muted); margin-left: auto; }
+
+    .detail-card-prompt {
+      font-size: 13px;
+      color: var(--sub);
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* scrollbars */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>// session dashboard</h1>
+  <div class="stats-bar" id="stats-bar"></div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div>
+      <div class="panel-title">Activity</div>
+      <div class="heatmap-grid" id="heatmap"></div>
+    </div>
+    <div>
+      <div class="panel-title">Themes</div>
+      <div class="theme-bars" id="theme-bars"></div>
+    </div>
+    <div>
+      <div class="panel-title">Projects</div>
+      <div class="project-list" id="project-list"></div>
+    </div>
+  </aside>
+
+  <!-- List view -->
+  <div class="main-top" id="main-top">
+    <input class="search-input" id="search" type="text" placeholder="Search sessions...">
+    <div class="filter-chips" id="filter-chips"></div>
+    <span class="result-count" id="result-count"></span>
+  </div>
+
+  <div class="session-list" id="session-list"></div>
+
+  <!-- Detail view (hidden until a card is clicked) -->
+  <div class="project-detail" id="project-detail">
+    <div class="detail-header">
+      <button class="back-btn" id="back-btn">← back</button>
+      <span class="detail-title" id="detail-title"></span>
+      <span class="detail-badge" id="detail-badge"></span>
+      <span class="detail-meta" id="detail-meta"></span>
+    </div>
+    <div class="detail-sessions" id="detail-sessions"></div>
+  </div>
+</div>
+
+<script type="module">
+const THEME_COLORS = {
+  "Music & Audio":          "var(--c-music)",
+  "Games & Creative Coding":"var(--c-games)",
+  "Web & Sites":            "var(--c-web)",
+  "Ulauncher Plugins":      "var(--c-ulauncher)",
+  "Joplin Plugins":         "var(--c-joplin)",
+  "AI Agents & Nanoclaw":   "var(--c-ai)",
+  "Hardware & Physical":    "var(--c-hardware)",
+  "Terminal & Dev Tools":   "var(--c-terminal)",
+  "This Project":           "var(--c-project)",
+  "Other":                  "var(--c-other)",
+};
+
+let state = { theme: null, date: null, project: null, search: "" };
+let allSessions = [];
+
+// ── helpers ──────────────────────────────────────────────────────────────────
+
+function applyFilters() {
+  return allSessions.filter(s => {
+    if (state.theme   && s.theme        !== state.theme)   return false;
+    if (state.date    && s.date         !== state.date)    return false;
+    if (state.project && s.project_name !== state.project) return false;
+    if (state.search) {
+      const q = state.search.toLowerCase();
+      if (!s.first_prompt.toLowerCase().includes(q) &&
+          !s.project_name.toLowerCase().includes(q) &&
+          !s.theme.toLowerCase().includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+function fmtDuration(mins) {
+  if (mins == null) return "";
+  if (mins < 60) return `${mins}m`;
+  return `${Math.floor(mins/60)}h ${mins%60}m`;
+}
+
+function esc(s) {
+  return (s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+// ── views ────────────────────────────────────────────────────────────────────
+
+function showListView() {
+  document.getElementById("main-top").style.display      = "";
+  document.getElementById("session-list").style.display  = "";
+  document.getElementById("project-detail").classList.remove("visible");
+}
+
+function showDetailView(projectName) {
+  const sessions = allSessions
+    .filter(s => s.project_name === projectName)
+    .sort((a, b) => (b.start || "").localeCompare(a.start || ""));
+
+  if (!sessions.length) return;
+
+  const theme = sessions[0].theme;
+  const color = THEME_COLORS[theme] || "var(--c-other)";
+
+  document.getElementById("detail-title").textContent = projectName;
+
+  const badge = document.getElementById("detail-badge");
+  badge.textContent = theme;
+  badge.style.background = `${color}22`;
+  badge.style.color = color;
+
+  document.getElementById("detail-meta").textContent =
+    `${sessions.length} session${sessions.length !== 1 ? "s" : ""}`;
+
+  const container = document.getElementById("detail-sessions");
+  container.innerHTML = sessions.map(s => {
+    const dur = fmtDuration(s.duration_minutes);
+    return `
+      <div class="detail-card">
+        <div class="detail-card-header">
+          <span class="detail-card-date">${s.date || ""}</span>
+          ${dur ? `<span class="detail-card-dur">${dur}</span>` : ""}
+          <span class="detail-card-turns">${s.assistant_turns} turns</span>
+        </div>
+        <div class="detail-card-prompt">${esc(s.first_prompt)}</div>
+      </div>`;
+  }).join("");
+
+  document.getElementById("main-top").style.display     = "none";
+  document.getElementById("session-list").style.display = "none";
+  document.getElementById("project-detail").classList.add("visible");
+}
+
+// ── render ───────────────────────────────────────────────────────────────────
+
+function renderSessions(sessions) {
+  const el = document.getElementById("session-list");
+  document.getElementById("result-count").textContent =
+    `${sessions.length} session${sessions.length !== 1 ? "s" : ""}`;
+
+  if (!sessions.length) {
+    el.innerHTML = `<div class="empty-state">No sessions match the current filters.</div>`;
+    return;
+  }
+
+  el.innerHTML = sessions.map(s => {
+    const color = THEME_COLORS[s.theme] || "var(--c-other)";
+    const dur = fmtDuration(s.duration_minutes);
+    return `
+      <div class="session-card" data-project="${esc(s.project_name)}">
+        <div class="session-meta">
+          <span class="session-date">${s.date || ""}</span>
+          <span class="session-project">${esc(s.project_name)}</span>
+          ${dur ? `<span class="session-duration">${dur}</span>` : ""}
+        </div>
+        <div class="session-body">
+          <div class="session-prompt">${esc(s.first_prompt)}</div>
+        </div>
+        <div class="session-right">
+          <span class="theme-badge" style="background:${color}22;color:${color}">${s.theme}</span>
+          <span class="session-turns">${s.assistant_turns} turns</span>
+        </div>
+      </div>`;
+  }).join("");
+
+  el.querySelectorAll(".session-card").forEach(card => {
+    card.addEventListener("click", () => showDetailView(card.dataset.project));
+  });
+}
+
+function refresh() {
+  renderSessions(applyFilters());
+  document.querySelectorAll(".theme-bar-row").forEach(el =>
+    el.classList.toggle("active", el.dataset.theme === state.theme));
+  document.querySelectorAll(".heatmap-cell").forEach(el =>
+    el.classList.toggle("active", el.dataset.date === state.date));
+  document.querySelectorAll(".project-row").forEach(el =>
+    el.classList.toggle("active", el.dataset.project === state.project));
+  document.querySelectorAll(".chip").forEach(el =>
+    el.classList.toggle("active", state[el.dataset.key] === el.dataset.val));
+}
+
+// ── build sidebar ─────────────────────────────────────────────────────────────
+
+function buildHeatmap(byDay) {
+  const el = document.getElementById("heatmap");
+
+  function level(c) {
+    if (c === 0) return 0;
+    if (c <= 2) return 1;
+    if (c <= 4) return 2;
+    if (c <= 7) return 3;
+    return 4;
+  }
+
+  const firstDate = new Date(byDay[0].date + "T00:00:00Z");
+  const lastDate  = new Date(byDay[byDay.length - 1].date + "T00:00:00Z");
+  const startDay  = new Date(firstDate);
+  startDay.setUTCDate(startDay.getUTCDate() - ((startDay.getUTCDay() + 6) % 7));
+
+  const dayMap = Object.fromEntries(byDay.map(d => [d.date, d.count]));
+  const cells = [];
+  for (let d = new Date(startDay); d <= lastDate; d.setUTCDate(d.getUTCDate() + 1)) {
+    const ds = d.toISOString().slice(0, 10);
+    cells.push({ date: ds, count: dayMap[ds] || 0 });
+  }
+
+  el.innerHTML = cells.map(({ date, count }) =>
+    `<div class="heatmap-cell heatmap-level-${level(count)}"
+          data-date="${date}"
+          title="${date}: ${count} session${count !== 1 ? "s" : ""}"></div>`
+  ).join("");
+
+  el.querySelectorAll(".heatmap-cell").forEach(cell =>
+    cell.addEventListener("click", () => {
+      state.date = state.date === cell.dataset.date ? null : cell.dataset.date;
+      showListView();
+      refresh();
+    })
+  );
+}
+
+function buildThemeBars(themes) {
+  const el = document.getElementById("theme-bars");
+  const max = Math.max(...themes.map(t => t.count));
+  el.innerHTML = themes.map(t => {
+    const color = THEME_COLORS[t.name] || "var(--c-other)";
+    const pct = Math.round((t.count / max) * 100);
+    return `
+      <div class="theme-bar-row" data-theme="${t.name}">
+        <span class="theme-bar-label">${t.name}</span>
+        <div class="theme-bar-track">
+          <div class="theme-bar-fill" style="width:${pct}%;background:${color}"></div>
+        </div>
+        <span class="theme-bar-count">${t.count}</span>
+      </div>`;
+  }).join("");
+
+  el.querySelectorAll(".theme-bar-row").forEach(row =>
+    row.addEventListener("click", () => {
+      state.theme = state.theme === row.dataset.theme ? null : row.dataset.theme;
+      showListView();
+      refresh();
+    })
+  );
+}
+
+function buildProjectList(sessions) {
+  const counts = {};
+  sessions.forEach(s => { counts[s.project_name] = (counts[s.project_name] || 0) + 1; });
+  const projects = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 30);
+
+  const el = document.getElementById("project-list");
+  el.innerHTML = projects.map(([name, count]) =>
+    `<div class="project-row" data-project="${esc(name)}">
+       <span class="project-name">${esc(name)}</span>
+       <span class="project-count">${count}</span>
+     </div>`
+  ).join("");
+
+  el.querySelectorAll(".project-row").forEach(row =>
+    row.addEventListener("click", () => {
+      state.project = state.project === row.dataset.project ? null : row.dataset.project;
+      showListView();
+      refresh();
+    })
+  );
+}
+
+function buildStats(stats) {
+  const { total_sessions, total_projects, date_range } = stats;
+  document.getElementById("stats-bar").innerHTML = `
+    <div class="stat">
+      <span class="stat-value">${total_sessions}</span>
+      <span class="stat-label">Sessions</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value">${total_projects}</span>
+      <span class="stat-label">Projects</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value">${date_range.start}</span>
+      <span class="stat-label">Since</span>
+    </div>`;
+}
+
+function buildFilterChips() {
+  const today = new Date().toISOString().slice(0, 10);
+  const el = document.getElementById("filter-chips");
+  el.innerHTML = `<button class="chip" data-key="date" data-val="${today}">Today</button>`;
+  el.querySelectorAll(".chip").forEach(chip =>
+    chip.addEventListener("click", () => {
+      state[chip.dataset.key] = state[chip.dataset.key] === chip.dataset.val ? null : chip.dataset.val;
+      showListView();
+      refresh();
+    })
+  );
+}
+
+// ── wire up back button ───────────────────────────────────────────────────────
+
+document.getElementById("back-btn").addEventListener("click", () => {
+  showListView();
+});
+
+document.getElementById("search").addEventListener("input", e => {
+  state.search = e.target.value.trim();
+  refresh();
+});
+
+// ── load ─────────────────────────────────────────────────────────────────────
+
+fetch("sessions-data.json")
+  .then(r => r.json())
+  .then(data => {
+    allSessions = data.sessions;
+    buildStats(data.stats);
+    buildHeatmap(data.sessions_by_day);
+    buildThemeBars(data.themes);
+    buildProjectList(data.sessions);
+    buildFilterChips();
+    refresh();
+  })
+  .catch(() => {
+    document.getElementById("session-list").innerHTML = `
+      <div class="empty-state">
+        Could not load sessions-data.json<br><br>
+        python3 sessions.py json -o sessions-data.json<br>
+        python3 -m http.server 8080
+      </div>`;
+  });
+</script>
+</body>
+</html>
