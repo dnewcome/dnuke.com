@@ -1,0 +1,3 @@
+[submodule "threequencer"]
+	path = threequencer
+	url = https://github.com/dnewcome/threequencer.git
