@@ -117,108 +117,28 @@ title: Home
   <div class="section-label">Work</div>
   <h2>Projects</h2>
   <div class="project-grid">
-
+    {% for project in syncedProjects %}
     <div class="project-card">
-      <div class="project-name">Rip.wav / AudioDestrukt</div>
-      <div class="project-desc">
-        Live audio slicer VST3 plugin. Captures transients in real time into 16 playable slots.
-        Trigger via MIDI or click. Built with JUCE, free and open source.
+      <div class="project-name">
+        <a href="/projects/{{ project.slug }}/">{{ project.name }}</a>
       </div>
+      <div class="project-desc">{{ project.description }}</div>
+      {% if project.tags.length > 0 %}
       <div class="project-tags">
-        <span class="tag">C++</span>
-        <span class="tag">JUCE</span>
-        <span class="tag">VST3</span>
-        <span class="tag">DSP</span>
+        {% for tag in project.tags %}
+        <span class="tag">{{ tag }}</span>
+        {% endfor %}
       </div>
+      {% endif %}
       <div class="project-links">
-        <a href="https://github.com/dnewcome/rt-slicer">GitHub &rarr;</a>
-        <a href="https://audiodestrukt.com">Site &rarr;</a>
+        {% if project.has_demo %}
+        <a href="/{{ project.slug }}/">Demo &rarr;</a>
+        {% endif %}
+        <a href="{{ project.github }}">GitHub &rarr;</a>
+        <a href="/devlog/{{ project.slug }}/">Devlog &rarr;</a>
       </div>
     </div>
-
-    <div class="project-card">
-      <div class="project-name">Art-Net Visualizer</div>
-      <div class="project-desc">
-        Real-time visualization tool for Art-Net lighting control data.
-        Listens on the network and renders DMX universe state.
-      </div>
-      <div class="project-tags">
-        <span class="tag">JavaScript</span>
-        <span class="tag">Art-Net</span>
-        <span class="tag">DMX</span>
-        <span class="tag">WebGL</span>
-      </div>
-      <div class="project-links">
-        <a href="https://github.com/dnewcome/artnet-visualizer">GitHub &rarr;</a>
-      </div>
-    </div>
-
-    <div class="project-card">
-      <div class="project-name">MMT-8 Modifications</div>
-      <div class="project-desc">
-        Hardware modifications and firmware work on the Oberheim MMT-8 MIDI step sequencer.
-        Reverse engineering, schematics, and custom code.
-      </div>
-      <div class="project-tags">
-        <span class="tag">Embedded C</span>
-        <span class="tag">MIDI</span>
-        <span class="tag">Hardware</span>
-        <span class="tag">Reverse Engineering</span>
-      </div>
-      <div class="project-links">
-        <a href="https://github.com/dnewcome/mmt8">GitHub &rarr;</a>
-      </div>
-    </div>
-
-    <div class="project-card">
-      <div class="project-name">Blender Art-Net UV</div>
-      <div class="project-desc">
-        Blender add-on that streams UV-mapped texture data over Art-Net for real-time
-        LED mapping and lighting design previsualization.
-      </div>
-      <div class="project-tags">
-        <span class="tag">Python</span>
-        <span class="tag">Blender</span>
-        <span class="tag">Art-Net</span>
-        <span class="tag">LED</span>
-      </div>
-      <div class="project-links">
-        <a href="https://github.com/dnewcome/blender-artnet-uv">GitHub &rarr;</a>
-      </div>
-    </div>
-
-    <div class="project-card">
-      <div class="project-name">Chord App</div>
-      <div class="project-desc">
-        Browser-based chord reference and music theory tool.
-        Interactive chord shapes and voicings for guitar and keyboard.
-      </div>
-      <div class="project-tags">
-        <span class="tag">JavaScript</span>
-        <span class="tag">WebAudio</span>
-        <span class="tag">Music Theory</span>
-      </div>
-      <div class="project-links">
-        <a href="https://github.com/dnewcome/chord-app">GitHub &rarr;</a>
-      </div>
-    </div>
-
-    <div class="project-card">
-      <div class="project-name">WavMulch</div>
-      <div class="project-desc">
-        Audio file processing utility. Batch operations on WAV files —
-        normalization, slicing, format conversion, and more.
-      </div>
-      <div class="project-tags">
-        <span class="tag">C</span>
-        <span class="tag">Audio</span>
-        <span class="tag">CLI</span>
-      </div>
-      <div class="project-links">
-        <a href="https://github.com/dnewcome/wavmulch">GitHub &rarr;</a>
-      </div>
-    </div>
-
+    {% endfor %}
   </div>
 </section>
 

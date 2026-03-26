@@ -3,10 +3,15 @@
 #
 # For each [[project]] in projects.toml:
 #   1. Clone the repo if not present locally, otherwise git pull
-#   2. Read the project's .project.toml for metadata
+#   2. Read .project.toml for metadata
 #   3. Copy devlog/*.md → src/devlog/<slug>/ with Eleventy frontmatter injected
 #   4. Copy devlog assets → src/images/devlog/<slug>/
-#   5. If [demo] section exists, copy web files → src/<slug>/
+#   5. Write src/devlog/<slug>/index.njk (per-project devlog index)
+#   6. Write src/projects/<slug>/index.md (project landing page)
+#   7. Append project record to src/_data/synced-projects.ndjson
+#   8. If [demo] exists, copy web files → src/<slug>/
+#
+# After the loop, synced-projects.ndjson is combined into synced-projects.json
 
 set -euo pipefail
 
@@ -15,8 +20,14 @@ PROJECTS_TOML="$SITE_ROOT/projects.toml"
 SRC_DIR="$SITE_ROOT/src"
 DEVLOG_BASE="$SRC_DIR/devlog"
 IMAGES_BASE="$SRC_DIR/images/devlog"
+PROJECTS_BASE="$SRC_DIR/projects"
+DATA_DIR="$SRC_DIR/_data"
 
-mkdir -p "$DEVLOG_BASE" "$IMAGES_BASE"
+mkdir -p "$DEVLOG_BASE" "$IMAGES_BASE" "$PROJECTS_BASE" "$DATA_DIR"
+
+# Start fresh accumulator for project JSON
+NDJSON="$DATA_DIR/syncedProjects.ndjson"
+> "$NDJSON"
 
 # Extract repo URLs from projects.toml
 REPOS=$(python3 -c "
@@ -53,16 +64,33 @@ for REPO_URL in $REPOS; do
     continue
   fi
 
-  # Read project metadata + demo file list from .project.toml
-  read -r PROJECT_SLUG PROJECT_NAME DEMO_FILES <<< "$(python3 -c "
-import tomllib, sys
-with open('$PROJECT_TOML', 'rb') as f:
+  # Read all metadata from .project.toml — write to a temp JSON file to avoid
+  # shell quoting issues when passing multiline data between processes.
+  META_FILE="$(mktemp)"
+  python3 - "$PROJECT_TOML" "$REPO_URL" "$SLUG" > "$META_FILE" <<'PY'
+import tomllib, json, sys
+toml_path, repo_url, fallback_slug = sys.argv[1], sys.argv[2], sys.argv[3]
+with open(toml_path, 'rb') as f:
     data = tomllib.load(f)
-slug = data.get('slug', '$SLUG')
-name = data.get('name', '$SLUG')
-files = ','.join(data.get('demo', {}).get('files', []))
-print(slug, name, files)
-")"
+out = {
+    'slug':        data.get('slug', fallback_slug),
+    'name':        data.get('name', fallback_slug),
+    'description': data.get('description', ''),
+    'tags':        data.get('tags', []),
+    'has_demo':    'demo' in data,
+    'demo_files':  data.get('demo', {}).get('files', []),
+    'github':      repo_url,
+}
+print(json.dumps(out))
+PY
+
+  # Extract individual fields from the JSON
+  _py() { python3 -c "import json,sys; d=json.load(open(sys.argv[1])); print($1)" "$META_FILE"; }
+  PROJECT_SLUG=$(_py "d['slug']")
+  PROJECT_NAME=$(_py "d['name']")
+  PROJECT_DESC=$(_py "d['description']")
+  HAS_DEMO=$(_py "'true' if d['has_demo'] else 'false'")
+  DEMO_FILES=$(_py "','.join(d['demo_files'])")
 
   echo "  project: $PROJECT_NAME ($PROJECT_SLUG)"
 
@@ -83,31 +111,22 @@ print(slug, name, files)
     BASENAME=$(basename "$MD" .md)
     DEST_FILE="$DEVLOG_DEST/${BASENAME}.md"
 
-    python3 - <<PY
-import re, sys, tomllib
+    python3 - "$MD" "$BASENAME" "$PROJECT_SLUG" "$PROJECT_NAME" "$DEST_FILE" <<'PY'
+import re, sys
 
-src   = "$MD"
-date  = re.search(r'^\d{4}-\d{2}-\d{2}', "$BASENAME").group(0)
-slug  = "$PROJECT_SLUG"
-name  = "$PROJECT_NAME"
-dest  = "$DEST_FILE"
+src, basename, slug, name, dest = sys.argv[1:]
 
 with open(src) as f:
     content = f.read()
 
-# Title from first H1
+date = re.search(r'^\d{4}-\d{2}-\d{2}', basename).group(0)
+
 title_m = re.search(r'^# (.+)$', content, re.MULTILINE)
 title = title_m.group(1).replace('"', '\\"') if title_m else slug
 
-# Strip first H1
 body = re.sub(r'^# .+\n\n?', '', content, count=1)
-
-# Strip HTML comments
 body = re.sub(r'<!--.*?-->', '', body, flags=re.DOTALL)
-
-# Rewrite image paths: assets/foo.png → /images/devlog/<slug>/foo.png
 body = re.sub(r'!\[\]\(assets/([^)]+)\)', r'![](/images/devlog/' + slug + r'/\1)', body)
-
 body = body.strip()
 
 frontmatter = f"""---
@@ -161,7 +180,56 @@ permalink: /devlog/${PROJECT_SLUG}/
   </ul>
 </div>
 NJKEOF
-  echo "  index → src/devlog/$PROJECT_SLUG/index.njk"
+  echo "  devlog index → src/devlog/$PROJECT_SLUG/index.njk"
+
+  # --- Project landing page ---
+  PROJ_DEST="$PROJECTS_BASE/$PROJECT_SLUG"
+  mkdir -p "$PROJ_DEST"
+  DESCRIPTION_MD="$LOCAL_PATH/DESCRIPTION.md"
+  DESCRIPTION_BODY=""
+  [ -f "$DESCRIPTION_MD" ] && DESCRIPTION_BODY=$(cat "$DESCRIPTION_MD")
+
+  DEMO_LINK=""
+  [ "$HAS_DEMO" = "true" ] && DEMO_LINK="<a href=\"/${PROJECT_SLUG}/\" class=\"btn btn-primary\">Live Demo &rarr;</a>"
+
+  python3 - "$PROJ_DEST/index.md" "$PROJECT_SLUG" "$PROJECT_NAME" \
+            "$PROJECT_DESC" "$REPO_URL" "$HAS_DEMO" "$DESCRIPTION_MD" <<'PY'
+import sys, re
+
+dest, slug, name, desc, github, has_demo, desc_md = sys.argv[1:]
+
+body = ""
+try:
+    with open(desc_md) as f:
+        body = f.read().strip()
+except FileNotFoundError:
+    body = desc
+
+demo_link = f"- [Live Demo](/{slug}/)" if has_demo == "true" else ""
+github_link = f"- [GitHub]({github})"
+devlog_link = f"- [Devlog](/devlog/{slug}/)"
+
+links = "\n".join(l for l in [demo_link, github_link, devlog_link] if l)
+
+frontmatter = f"""---
+layout: project-page.njk
+title: "{name}"
+slug: {slug}
+github: {github}
+has_demo: {has_demo}
+permalink: /projects/{slug}/
+---
+"""
+
+with open(dest, 'w') as f:
+    f.write(frontmatter + '\n' + body + '\n\n' + links + '\n')
+
+print(f"  landing → src/projects/{slug}/index.md")
+PY
+
+  # --- Accumulate project record for synced-projects.json ---
+  cat "$META_FILE" >> "$NDJSON"
+  rm "$META_FILE"
 
   # --- Demo files ---
   if [ -n "$DEMO_FILES" ]; then
@@ -177,3 +245,18 @@ NJKEOF
 
   echo "  ✓ done"
 done
+
+# Combine NDJSON → synced-projects.json
+python3 - "$NDJSON" "$DATA_DIR/syncedProjects.json" <<'PY'
+import json, sys
+ndjson_path, out_path = sys.argv[1], sys.argv[2]
+records = []
+with open(ndjson_path) as f:
+    for line in f:
+        line = line.strip()
+        if line:
+            records.append(json.loads(line))
+with open(out_path, 'w') as f:
+    json.dump(records, f, indent=2)
+print(f"  data → src/_data/syncedProjects.json ({len(records)} projects)")
+PY

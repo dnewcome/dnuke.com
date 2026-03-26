@@ -1,0 +1,16 @@
+---
+layout: base.njk
+---
+<article class="post-container">
+  <div class="post-header">
+    <div class="post-meta">
+      {% if github %}<a href="{{ github }}">GitHub</a>{% endif %}
+      {% if has_demo %}<span class="tag"><a href="/{{ slug }}/">Live Demo</a></span>{% endif %}
+      <span class="tag"><a href="/devlog/{{ slug }}/">Devlog</a></span>
+    </div>
+    <h1>{{ title }}</h1>
+  </div>
+  <div class="post-body">
+    {{ content | safe }}
+  </div>
+</article>

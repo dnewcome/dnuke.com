@@ -1,0 +1,42 @@
+[
+  {
+    "slug": "threequencer",
+    "name": "Threequencer",
+    "description": "A 3D voxel sequencer \u2014 16 steps, 16 pitches, 16 layers, one cube",
+    "tags": [
+      "music",
+      "sequencer",
+      "webgl",
+      "three.js",
+      "creative-code",
+      "browser"
+    ],
+    "has_demo": true,
+    "demo_files": [
+      "index.html",
+      "main.js",
+      "grid.js",
+      "renderer.js",
+      "audio.js",
+      "clock.js"
+    ],
+    "github": "https://github.com/dnewcome/threequencer"
+  },
+  {
+    "slug": "peeq",
+    "name": "peeq",
+    "description": "A keyboard-driven live step sequencer for Pure Data, written in 2003",
+    "tags": [
+      "music",
+      "sequencer",
+      "pure-data",
+      "live-performance",
+      "browser"
+    ],
+    "has_demo": true,
+    "demo_files": [
+      "index.html"
+    ],
+    "github": "https://github.com/dnewcome/peeq"
+  }
+]
