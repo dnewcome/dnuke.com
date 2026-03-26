@@ -29,7 +29,14 @@ for p in data.get('project', []):
 
 for REPO_URL in $REPOS; do
   SLUG=$(basename "$REPO_URL" .git)
-  LOCAL_PATH="$(dirname "$SITE_ROOT")/$SLUG"
+  # Prefer a sibling directory (local dev); fall back to /tmp on CI where
+  # the repo root is at / or another non-writable parent.
+  _SIBLING="$(dirname "$SITE_ROOT")/$SLUG"
+  if [ "$(dirname "$SITE_ROOT")" = "/" ]; then
+    LOCAL_PATH="/tmp/do-sync-repos/$SLUG"
+  else
+    LOCAL_PATH="$_SIBLING"
+  fi
 
   # Clone or pull
   if [ -d "$LOCAL_PATH/.git" ]; then
