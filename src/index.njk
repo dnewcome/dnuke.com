@@ -117,25 +117,27 @@ title: Home
   <div class="section-label">Work</div>
   <h2>Projects</h2>
   <div class="project-grid">
-    {% for project in syncedProjects %}
+    {% for project in collections.projects %}
     <div class="project-card">
       <div class="project-name">
-        <a href="/projects/{{ project.slug }}/">{{ project.name }}</a>
+        <a href="{{ project.url }}">{{ project.data.title }}</a>
       </div>
-      <div class="project-desc">{{ project.description }}</div>
-      {% if project.tags.length > 0 %}
+      <div class="project-desc">{{ project.data.description }}</div>
+      {% if project.data.tags.length > 0 %}
       <div class="project-tags">
-        {% for tag in project.tags %}
+        {% for tag in project.data.tags %}
         <span class="tag">{{ tag }}</span>
         {% endfor %}
       </div>
       {% endif %}
       <div class="project-links">
-        {% if project.has_demo %}
-        <a href="/{{ project.slug }}/">Demo &rarr;</a>
+        {% if project.data.has_demo %}
+        <a href="/{{ project.data.slug }}/">Demo &rarr;</a>
         {% endif %}
-        <a href="{{ project.github }}">GitHub &rarr;</a>
-        <a href="/devlog/{{ project.slug }}/">Devlog &rarr;</a>
+        {% if project.data.github %}
+        <a href="{{ project.data.github }}">GitHub &rarr;</a>
+        {% endif %}
+        <a href="/devlog/{{ project.data.slug }}/">Devlog &rarr;</a>
       </div>
     </div>
     {% endfor %}

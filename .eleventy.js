@@ -22,6 +22,11 @@ module.exports = function(eleventyConfig) {
       .sort((a, b) => b.date - a.date);
   });
 
+  // All projects (synced + static) — drives home page cards
+  eleventyConfig.addCollection("projects", function(collectionApi) {
+    return collectionApi.getFilteredByGlob("src/projects/*/index.md");
+  });
+
   // One entry per devlog project (for per-project index pages)
   eleventyConfig.addCollection("devlogProjects", function(collectionApi) {
     const seen = new Set();
