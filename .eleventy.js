@@ -5,9 +5,10 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy({ "dashboard.html": "dashboard.html" });
   eleventyConfig.addPassthroughCopy({ "sessions-data.json": "sessions-data.json" });
 
-  // Project demo files — JS/CSS in src/<slug>/ served as static assets
+  // Project demo files — all assets in src/<slug>/ served as static assets
   eleventyConfig.addPassthroughCopy("src/*/*.js");
   eleventyConfig.addPassthroughCopy("src/*/*.css");
+  eleventyConfig.addPassthroughCopy("src/*/*.html");
 
   // Blog post collection — newest first
   eleventyConfig.addCollection("posts", function(collectionApi) {
