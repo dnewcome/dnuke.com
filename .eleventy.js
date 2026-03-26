@@ -21,6 +21,19 @@ module.exports = function(eleventyConfig) {
       .sort((a, b) => b.date - a.date);
   });
 
+  // One entry per devlog project (for per-project index pages)
+  eleventyConfig.addCollection("devlogProjects", function(collectionApi) {
+    const seen = new Set();
+    return collectionApi.getFilteredByGlob("src/devlog/**/*.md")
+      .sort((a, b) => b.date - a.date)
+      .filter(post => {
+        const slug = post.data.project;
+        if (!slug || seen.has(slug)) return false;
+        seen.add(slug);
+        return true;
+      });
+  });
+
   // Format a date as "March 1, 2025"
   eleventyConfig.addFilter("dateFormat", function(date) {
     if (!date) return '';

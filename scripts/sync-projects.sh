@@ -129,6 +129,40 @@ print(f"  devlog: {dest}")
 PY
   done
 
+  # --- Per-project devlog index page ---
+  cat > "$DEVLOG_DEST/index.njk" <<NJKEOF
+---
+layout: base.njk
+title: "${PROJECT_NAME} — Devlog"
+project: ${PROJECT_SLUG}
+project_name: ${PROJECT_NAME}
+permalink: /devlog/${PROJECT_SLUG}/
+---
+<div class="blog-container">
+  <div class="post-meta" style="margin-bottom:8px;">
+    <a href="/devlog/">← All devlog entries</a>
+  </div>
+  <div class="page-title">${PROJECT_NAME}</div>
+  <p style="color:#888; font-size:14px; margin-bottom:32px;">
+    Build log for ${PROJECT_NAME}.
+  </p>
+  <ul class="post-list">
+    {%- for post in collections.devlog %}
+      {%- if post.data.project == "${PROJECT_SLUG}" %}
+      <li class="post-item">
+        <div class="post-meta">{{ post.date | dateFormat }}</div>
+        <div class="post-title"><a href="{{ post.url }}">{{ post.data.title }}</a></div>
+        {%- if post.templateContent %}
+        <div class="post-excerpt">{{ post.templateContent | excerpt }}</div>
+        {%- endif %}
+      </li>
+      {%- endif %}
+    {%- endfor %}
+  </ul>
+</div>
+NJKEOF
+  echo "  index → src/devlog/$PROJECT_SLUG/index.njk"
+
   # --- Demo files ---
   if [ -n "$DEMO_FILES" ]; then
     DEMO_DEST="$SRC_DIR/$PROJECT_SLUG"
