@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "dnuke.com — Daniel Newcome personal site",
   "scripts": {
-    "build": "eleventy",
-    "serve": "eleventy --serve",
+    "sync": "bash scripts/sync-projects.sh",
+    "build": "bash scripts/sync-projects.sh && eleventy",
+    "serve": "bash scripts/sync-projects.sh && eleventy --serve",
     "watch": "eleventy --watch",
     "pdf": "eleventy && node scripts/pdf.js"
   },

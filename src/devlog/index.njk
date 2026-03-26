@@ -1,0 +1,30 @@
+---
+layout: base.njk
+title: Devlog
+---
+<div class="blog-container">
+  <div class="page-title">Devlog &mdash; Build Log</div>
+  <p style="color:#888; font-size:14px; margin-bottom:32px;">
+    Notes, screenshots, and updates from active projects.
+  </p>
+
+  {% if collections.devlog.length > 0 %}
+  <ul class="post-list">
+    {% for post in collections.devlog %}
+    <li class="post-item">
+      <div class="post-meta">
+        {{ post.date | dateFormat }}
+        &mdash;
+        <a href="/devlog/{{ post.data.project }}/">{{ post.data.project_name }}</a>
+      </div>
+      <div class="post-title"><a href="{{ post.url }}">{{ post.data.title }}</a></div>
+      {% if post.templateContent %}
+      <div class="post-excerpt">{{ post.templateContent | excerpt }}</div>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p style="color:#888;">No devlog entries yet. Run <code>npm run sync</code> to pull project updates.</p>
+  {% endif %}
+</div>

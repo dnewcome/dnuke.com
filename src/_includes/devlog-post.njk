@@ -1,0 +1,19 @@
+---
+layout: base.njk
+---
+<article class="post-container">
+  <div class="post-header">
+    <div class="post-meta">
+      <span>{{ date | dateFormat }}</span>
+      <span class="tag"><a href="/devlog/">devlog</a></span>
+      <span class="tag"><a href="/devlog/{{ project }}/">{{ project_name }}</a></span>
+    </div>
+    <h1>{{ title }}</h1>
+  </div>
+  <div class="post-body">
+    {{ content | safe }}
+  </div>
+  <div class="post-footer">
+    <a href="/devlog/">← All devlog entries</a>
+  </div>
+</article>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Threequencer</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #13131f;
+      color: #ccc;
+      font-family: monospace;
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    #app {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      height: 100dvh; /* excludes browser chrome on mobile */
+    }
+
+    #canvas-container {
+      flex: 1;
+      position: relative;
+      min-height: 0; /* prevent flex child from overflowing */
+    }
+
+    canvas {
+      display: block;
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      touch-action: none; /* let OrbitControls handle all touch gestures */
+    }
+
+    #controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      padding-bottom: calc(10px + env(safe-area-inset-bottom));
+      background: #111118;
+      border-top: 1px solid #222;
+      flex-shrink: 0;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      white-space: nowrap;
+    }
+
+    #controls label { font-size: 11px; color: #888; }
+
+    button {
+      background: #1e1e2e;
+      color: #cdd6f4;
+      border: 1px solid #333;
+      padding: 10px 18px;
+      cursor: pointer;
+      font-family: monospace;
+      font-size: 14px;
+      border-radius: 3px;
+      flex-shrink: 0;
+      min-height: 44px; /* minimum touch target */
+    }
+    button:hover { background: #2a2a3e; }
+    button.active { background: #45475a; border-color: #89b4fa; color: #89b4fa; }
+
+    input[type=range] { width: 80px; accent-color: #89b4fa; }
+
+    #step-display {
+      font-size: 11px;
+      color: #6c7086;
+      min-width: 60px;
+    }
+
+    select {
+      background: #1e1e2e;
+      color: #cdd6f4;
+      border: 1px solid #333;
+      padding: 8px 10px;
+      font-family: monospace;
+      font-size: 14px;
+      border-radius: 3px;
+      min-height: 44px; /* minimum touch target */
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div id="canvas-container">
+      <canvas id="c"></canvas>
+    </div>
+    <div id="controls">
+      <button id="btn-play">▶ Play</button>
+      <label>BPM <input type="range" id="bpm" min="40" max="240" value="120" /></label>
+      <span id="bpm-val">120</span>
+      <label>Synth
+        <select id="synth-type">
+          <option value="synth">Synth</option>
+          <option value="fm">FMSynth</option>
+          <option value="am">AMSynth</option>
+          <option value="membrane">Membrane</option>
+        </select>
+      </label>
+      <label>Layer mix
+        <select id="mix-mode">
+          <option value="or">OR (any)</option>
+          <option value="and">AND (all)</option>
+          <option value="first">First only</option>
+        </select>
+      </label>
+      <span id="step-display">step —</span>
+    </div>
+  </div>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.166/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.166/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module" src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+## dnuke.com project registry
+## Each [[project]] entry is synced on build:
+##   - devlog entries → src/devlog/<slug>/
+##   - demo files     → src/<slug>/  (if [demo] in .project.toml)
+
+[[project]]
+repo = "https://github.com/dnewcome/threequencer"

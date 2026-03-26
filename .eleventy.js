@@ -5,9 +5,19 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy({ "dashboard.html": "dashboard.html" });
   eleventyConfig.addPassthroughCopy({ "sessions-data.json": "sessions-data.json" });
 
+  // Project demo files — JS/CSS in src/<slug>/ served as static assets
+  eleventyConfig.addPassthroughCopy("src/*/*.js");
+  eleventyConfig.addPassthroughCopy("src/*/*.css");
+
   // Blog post collection — newest first
   eleventyConfig.addCollection("posts", function(collectionApi) {
     return collectionApi.getFilteredByGlob("src/blog/posts/*.md")
+      .sort((a, b) => b.date - a.date);
+  });
+
+  // Devlog collection — all projects, newest first
+  eleventyConfig.addCollection("devlog", function(collectionApi) {
+    return collectionApi.getFilteredByGlob("src/devlog/**/*.md")
       .sort((a, b) => b.date - a.date);
   });
 
