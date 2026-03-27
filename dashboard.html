@@ -38,8 +38,15 @@
 
     /* ── HEADER ── */
     header {
-      padding: 20px 28px 14px;
+      padding: 16px 28px 14px;
       border-bottom: 1px solid var(--border);
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 10px;
     }
 
     header h1 {
@@ -47,8 +54,51 @@
       font-weight: 600;
       letter-spacing: 0.05em;
       color: var(--accent);
-      margin-bottom: 10px;
+      white-space: nowrap;
     }
+
+    .active-filters {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .filter-tag {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      padding: 2px 8px 2px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      background: #7c5cfc18;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .filter-tag:hover { background: #7c5cfc30; }
+
+    .filter-tag-x {
+      font-size: 13px;
+      line-height: 1;
+      opacity: 0.7;
+    }
+
+    .clear-btn {
+      font-size: 11px;
+      padding: 2px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: transparent;
+      font-family: inherit;
+      cursor: pointer;
+      transition: border-color 0.1s, color 0.1s;
+    }
+
+    .clear-btn:hover { border-color: var(--muted); color: var(--text); }
 
     .stats-bar { display: flex; gap: 28px; }
     .stat { display: flex; flex-direction: column; gap: 1px; }
@@ -332,6 +382,29 @@
 
     .detail-meta { font-size: 12px; color: var(--muted); margin-left: auto; }
 
+    .detail-stats {
+      display: flex;
+      gap: 24px;
+      padding: 10px 22px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .detail-stat { display: flex; flex-direction: column; gap: 1px; }
+    .detail-stat-value { font-size: 16px; font-weight: 700; color: var(--text); }
+    .detail-stat-label { font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+
+    .repo-link {
+      font-size: 11px;
+      color: var(--muted);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: 4px;
+      transition: border-color 0.1s, color 0.1s;
+    }
+    .repo-link:hover { border-color: var(--muted); color: var(--text); }
+
     .detail-sessions {
       overflow-y: auto;
       padding: 12px 22px;
@@ -375,7 +448,10 @@
 <body>
 
 <header>
-  <h1>// session dashboard</h1>
+  <div class="header-top">
+    <h1>// session dashboard</h1>
+    <div class="active-filters" id="active-filters"></div>
+  </div>
   <div class="stats-bar" id="stats-bar"></div>
 </header>
 
@@ -410,8 +486,10 @@
       <button class="back-btn" id="back-btn">← back</button>
       <span class="detail-title" id="detail-title"></span>
       <span class="detail-badge" id="detail-badge"></span>
+      <a class="repo-link" id="detail-repo" target="_blank" rel="noopener" style="display:none">github ↗</a>
       <span class="detail-meta" id="detail-meta"></span>
     </div>
+    <div class="detail-stats" id="detail-stats"></div>
     <div class="detail-sessions" id="detail-sessions"></div>
   </div>
 </div>
@@ -485,8 +563,40 @@ function showDetailView(projectName) {
   badge.style.background = `${color}22`;
   badge.style.color = color;
 
+  const totalHours = sessions.reduce((a, s) => a + (s.duration_minutes || 0), 0) / 60;
+  const totalIn    = sessions.reduce((a, s) => a + (s.input_tokens || 0), 0);
+  const totalOut   = sessions.reduce((a, s) => a + (s.output_tokens || 0), 0);
+  const totalCache = sessions.reduce((a, s) => a + (s.cache_read_tokens || 0), 0);
+
   document.getElementById("detail-meta").textContent =
     `${sessions.length} session${sessions.length !== 1 ? "s" : ""}`;
+
+  document.getElementById("detail-stats").innerHTML = `
+    <div class="detail-stat">
+      <span class="detail-stat-value">${totalHours.toFixed(1)}h</span>
+      <span class="detail-stat-label">Hours</span>
+    </div>
+    <div class="detail-stat">
+      <span class="detail-stat-value">${fmtTokens(totalIn)}</span>
+      <span class="detail-stat-label">Input</span>
+    </div>
+    <div class="detail-stat">
+      <span class="detail-stat-value">${fmtTokens(totalOut)}</span>
+      <span class="detail-stat-label">Output</span>
+    </div>
+    <div class="detail-stat">
+      <span class="detail-stat-value">${fmtTokens(totalCache)}</span>
+      <span class="detail-stat-label">Cache Read</span>
+    </div>`;
+
+  const repoUrl = sessions.find(s => s.repo_url)?.repo_url;
+  const repoEl = document.getElementById("detail-repo");
+  if (repoUrl) {
+    repoEl.href = repoUrl;
+    repoEl.style.display = "";
+  } else {
+    repoEl.style.display = "none";
+  }
 
   const container = document.getElementById("detail-sessions");
   container.innerHTML = sessions.map(s => {
@@ -545,7 +655,10 @@ function renderSessions(sessions) {
 }
 
 function refresh() {
-  renderSessions(applyFilters());
+  const filtered = applyFilters();
+  renderSessions(filtered);
+  renderStats(filtered);
+  renderActiveFilters();
   document.querySelectorAll(".theme-bar-row").forEach(el =>
     el.classList.toggle("active", el.dataset.theme === state.theme));
   document.querySelectorAll(".heatmap-cell").forEach(el =>
@@ -572,7 +685,7 @@ function buildHeatmap(byDay) {
   const firstDate = new Date(byDay[0].date + "T00:00:00Z");
   const lastDate  = new Date(byDay[byDay.length - 1].date + "T00:00:00Z");
   const startDay  = new Date(firstDate);
-  startDay.setUTCDate(startDay.getUTCDate() - ((startDay.getUTCDay() + 6) % 7));
+  startDay.setUTCDate(startDay.getUTCDate() - startDay.getUTCDay());
 
   const dayMap = Object.fromEntries(byDay.map(d => [d.date, d.count]));
   const cells = [];
@@ -643,21 +756,81 @@ function buildProjectList(sessions) {
   );
 }
 
-function buildStats(stats) {
-  const { total_sessions, total_projects, date_range } = stats;
+function fmtTokens(n) {
+  if (n == null || n === 0) return "0";
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(0)}k`;
+  return `${n}`;
+}
+
+function renderStats(sessions) {
+  const count    = sessions.length;
+  const projects = new Set(sessions.map(s => s.project_name)).size;
+  const hours    = sessions.reduce((a, s) => a + (s.duration_minutes || 0), 0) / 60;
+  const inputTok = sessions.reduce((a, s) => a + (s.input_tokens || 0), 0);
+  const outTok   = sessions.reduce((a, s) => a + (s.output_tokens || 0), 0);
+
   document.getElementById("stats-bar").innerHTML = `
     <div class="stat">
-      <span class="stat-value">${total_sessions}</span>
+      <span class="stat-value">${count}</span>
       <span class="stat-label">Sessions</span>
     </div>
     <div class="stat">
-      <span class="stat-value">${total_projects}</span>
+      <span class="stat-value">${projects}</span>
       <span class="stat-label">Projects</span>
     </div>
     <div class="stat">
-      <span class="stat-value">${date_range.start}</span>
-      <span class="stat-label">Since</span>
+      <span class="stat-value">${hours.toFixed(1)}h</span>
+      <span class="stat-label">Hours</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value">${fmtTokens(inputTok)}</span>
+      <span class="stat-label">Input Tokens</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value">${fmtTokens(outTok)}</span>
+      <span class="stat-label">Output Tokens</span>
     </div>`;
+}
+
+function renderActiveFilters() {
+  const el = document.getElementById("active-filters");
+  const tags = [];
+
+  if (state.theme)   tags.push({ key: "theme",   label: state.theme });
+  if (state.date)    tags.push({ key: "date",     label: state.date });
+  if (state.project) tags.push({ key: "project",  label: state.project });
+  if (state.search)  tags.push({ key: "search",   label: `"${state.search}"` });
+
+  if (!tags.length) { el.innerHTML = ""; return; }
+
+  el.innerHTML = tags.map(t =>
+    `<span class="filter-tag" data-key="${t.key}">
+       ${esc(t.label)}<span class="filter-tag-x">×</span>
+     </span>`
+  ).join("") +
+  `<button class="clear-btn">clear all</button>`;
+
+  el.querySelectorAll(".filter-tag").forEach(tag =>
+    tag.addEventListener("click", () => {
+      const k = tag.dataset.key;
+      if (k === "search") {
+        state.search = "";
+        document.getElementById("search").value = "";
+      } else {
+        state[k] = null;
+      }
+      showListView();
+      refresh();
+    })
+  );
+
+  el.querySelector(".clear-btn").addEventListener("click", () => {
+    state.theme = null; state.date = null; state.project = null; state.search = "";
+    document.getElementById("search").value = "";
+    showListView();
+    refresh();
+  });
 }
 
 function buildFilterChips() {
@@ -690,7 +863,6 @@ fetch("sessions-data.json")
   .then(r => r.json())
   .then(data => {
     allSessions = data.sessions;
-    buildStats(data.stats);
     buildHeatmap(data.sessions_by_day);
     buildThemeBars(data.themes);
     buildProjectList(data.sessions);
