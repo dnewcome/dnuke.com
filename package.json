@@ -7,12 +7,14 @@
     "build": "bash scripts/sync-projects.sh && eleventy",
     "serve": "bash scripts/sync-projects.sh && eleventy --serve",
     "watch": "eleventy --watch",
-    "pdf": "eleventy && node scripts/pdf.js"
+    "pdf": "eleventy && node scripts/pdf.js",
+    "scrape-resume": "node scripts/scrape-linkedin.js"
   },
   "engines": {
     "node": ">=18"
   },
   "devDependencies": {
-    "@11ty/eleventy": "^3.0.0"
+    "@11ty/eleventy": "^3.0.0",
+    "puppeteer": "^24.40.0"
   }
 }
