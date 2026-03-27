@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-03-27T06:46:31.584509+00:00",
+  "generated_at": "2026-03-27T07:07:15.751219+00:00",
   "stats": {
-    "total_sessions": 143,
-    "total_projects": 71,
-    "total_hours": 149.3,
-    "total_input_tokens": 82428,
-    "total_output_tokens": 3893967,
-    "total_cache_read_tokens": 640052725,
-    "total_cache_creation_tokens": 23441496,
+    "total_sessions": 145,
+    "total_projects": 72,
+    "total_hours": 149.5,
+    "total_input_tokens": 91701,
+    "total_output_tokens": 3897075,
+    "total_cache_read_tokens": 640591131,
+    "total_cache_creation_tokens": 23510834,
     "date_range": {
       "start": "2026-02-20",
       "end": "2026-03-27"
@@ -46,7 +46,7 @@
     },
     "peeq": {
       "sessions": 4,
-      "hours": 2.8,
+      "hours": 2.9,
       "input_tokens": 356,
       "output_tokens": 91953
     },
@@ -127,6 +127,12 @@
       "hours": 3.0,
       "input_tokens": 187,
       "output_tokens": 19506
+    },
+    "mmt8": {
+      "sessions": 2,
+      "hours": 0.1,
+      "input_tokens": 9273,
+      "output_tokens": 3108
     },
     "threequencer": {
       "sessions": 2,
@@ -432,7 +438,7 @@
   "themes": [
     {
       "name": "Music & Audio",
-      "count": 26
+      "count": 28
     },
     {
       "name": "Games & Creative Coding",
@@ -562,24 +568,64 @@
     },
     {
       "date": "2026-03-27",
-      "count": 2
+      "count": 4
     }
   ],
   "sessions": [
     {
+      "session_id": "33ceba16-1bee-4199-9168-892b39f362a1",
+      "session_id_short": "33ceba16",
+      "start": "2026-03-27T07:06:20.933Z",
+      "end": "2026-03-27T07:07:15.318Z",
+      "date": "2026-03-27",
+      "duration_minutes": 0,
+      "cwd": "/home/dan/sandbox/dnewcome/mmt8",
+      "project_name": "mmt8",
+      "theme": "Music & Audio",
+      "source": "claude",
+      "repo_url": null,
+      "first_prompt": "This project doesn't have a .project.toml file yet",
+      "user_turns": 1,
+      "assistant_turns": 12,
+      "input_tokens": 18,
+      "output_tokens": 1401,
+      "cache_read_tokens": 217711,
+      "cache_creation_tokens": 42184
+    },
+    {
+      "session_id": "e7a8d895-d3a5-40d6-a9c3-1668cd56391c",
+      "session_id_short": "e7a8d895",
+      "start": "2026-03-27T06:51:52.378Z",
+      "end": "2026-03-27T06:59:35.843Z",
+      "date": "2026-03-27",
+      "duration_minutes": 7,
+      "cwd": "/home/dan/sandbox/dnewcome/mmt8",
+      "project_name": "mmt8",
+      "theme": "Music & Audio",
+      "source": "claude",
+      "repo_url": null,
+      "first_prompt": "<command-message>add-project</command-message>\n<command-name>/add-project</command-name>",
+      "user_turns": 3,
+      "assistant_turns": 18,
+      "input_tokens": 9255,
+      "output_tokens": 1707,
+      "cache_read_tokens": 320695,
+      "cache_creation_tokens": 27154
+    },
+    {
       "session_id": "4e418cff-7e2a-4eaa-9e17-e4b1d2e4f26f",
       "session_id_short": "4e418cff",
       "start": "2026-03-27T06:41:25.433Z",
-      "end": "2026-03-27T06:46:31.126Z",
+      "end": "2026-03-27T06:51:07.865Z",
       "date": "2026-03-27",
-      "duration_minutes": 5,
+      "duration_minutes": 9,
       "cwd": "/home/dan/sandbox/dnewcome/peeq",
       "project_name": "peeq",
       "theme": "Other",
       "source": "claude",
       "repo_url": null,
       "first_prompt": "Ok I need to generate some devlog/ entries from my commit history here.",
-      "user_turns": 2,
+      "user_turns": 5,
       "assistant_turns": 62,
       "input_tokens": 74,
       "output_tokens": 8765,
