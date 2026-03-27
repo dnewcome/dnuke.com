@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-03-27T07:07:15.751219+00:00",
+  "generated_at": "2026-03-27T07:09:59.700806+00:00",
   "stats": {
     "total_sessions": 145,
     "total_projects": 72,
-    "total_hours": 149.5,
-    "total_input_tokens": 91701,
-    "total_output_tokens": 3897075,
-    "total_cache_read_tokens": 640591131,
-    "total_cache_creation_tokens": 23510834,
+    "total_hours": 149.6,
+    "total_input_tokens": 91730,
+    "total_output_tokens": 3900906,
+    "total_cache_read_tokens": 641627927,
+    "total_cache_creation_tokens": 23583682,
     "date_range": {
       "start": "2026-02-20",
       "end": "2026-03-27"
@@ -130,9 +130,9 @@
     },
     "mmt8": {
       "sessions": 2,
-      "hours": 0.1,
-      "input_tokens": 9273,
-      "output_tokens": 3108
+      "hours": 0.2,
+      "input_tokens": 9302,
+      "output_tokens": 6939
     },
     "threequencer": {
       "sessions": 2,
@@ -576,21 +576,21 @@
       "session_id": "33ceba16-1bee-4199-9168-892b39f362a1",
       "session_id_short": "33ceba16",
       "start": "2026-03-27T07:06:20.933Z",
-      "end": "2026-03-27T07:07:15.318Z",
+      "end": "2026-03-27T07:09:59.312Z",
       "date": "2026-03-27",
-      "duration_minutes": 0,
+      "duration_minutes": 3,
       "cwd": "/home/dan/sandbox/dnewcome/mmt8",
       "project_name": "mmt8",
       "theme": "Music & Audio",
       "source": "claude",
       "repo_url": null,
       "first_prompt": "This project doesn't have a .project.toml file yet",
-      "user_turns": 1,
-      "assistant_turns": 12,
-      "input_tokens": 18,
-      "output_tokens": 1401,
-      "cache_read_tokens": 217711,
-      "cache_creation_tokens": 42184
+      "user_turns": 2,
+      "assistant_turns": 37,
+      "input_tokens": 47,
+      "output_tokens": 5232,
+      "cache_read_tokens": 1254507,
+      "cache_creation_tokens": 115032
     },
     {
       "session_id": "e7a8d895-d3a5-40d6-a9c3-1668cd56391c",
