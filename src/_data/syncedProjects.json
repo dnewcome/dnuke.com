@@ -38,5 +38,22 @@
       "index.html"
     ],
     "github": "https://github.com/dnewcome/peeq"
+  },
+  {
+    "slug": "mmt8",
+    "name": "mmt8",
+    "description": "Reverse engineering and porting of the Alesis MMT-8 MIDI sequencer firmware (v1.11)",
+    "tags": [
+      "embedded",
+      "8051",
+      "reverse-engineering",
+      "MIDI",
+      "C",
+      "firmware",
+      "Ghidra"
+    ],
+    "has_demo": false,
+    "demo_files": [],
+    "github": "https://github.com/dnewcome/mmt8"
   }
 ]
