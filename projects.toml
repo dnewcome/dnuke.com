@@ -8,3 +8,6 @@ repo = "https://github.com/dnewcome/threequencer"
 
 [[project]]
 repo = "https://github.com/dnewcome/peeq"
+
+[[project]]
+repo = "https://github.com/dnewcome/mmt8"
