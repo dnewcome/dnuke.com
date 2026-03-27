@@ -2,8 +2,8 @@
 layout: project-page.njk
 title: "Threequencer"
 slug: threequencer
-description: "A 3D voxel step sequencer in the browser — 16 steps, 16 pitches, 16 layers arranged as a rotating cube. Built with Three.js and Web Audio API."
-tags: [music, sequencer, webgl, three.js, webaudio, browser]
+description: "A 3D step sequencer running in the browser. 16 steps, 16 pitches, 16 layers — arranged as a cube of voxels. Each face of the cube is a different view into the pattern. Built with Three.js and the Web Audio API."
+tags: [music, sequencer, webgl, three.js, creative-code, browser]
 github: https://github.com/dnewcome/threequencer
 has_demo: true
 permalink: /projects/threequencer/

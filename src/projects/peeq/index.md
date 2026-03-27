@@ -2,8 +2,8 @@
 layout: project-page.njk
 title: "peeq"
 slug: peeq
-description: "A keyboard-driven live step sequencer originally written for Pure Data in 2003, now ported to the browser. Pattern switching with legato mode, built for laptop performance."
-tags: [music, sequencer, pure-data, tone.js, webaudio, browser]
+description: "A keyboard-driven live step sequencer originally written for Pure Data in 2003, now ported to the browser. Built for laptop performance — every feature is reachable without a mouse."
+tags: [music, sequencer, pure-data, live-performance, browser]
 github: https://github.com/dnewcome/peeq
 has_demo: true
 permalink: /projects/peeq/

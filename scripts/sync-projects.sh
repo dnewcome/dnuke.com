@@ -193,10 +193,12 @@ NJKEOF
   [ "$HAS_DEMO" = "true" ] && DEMO_LINK="<a href=\"/${PROJECT_SLUG}/\" class=\"btn btn-primary\">Live Demo &rarr;</a>"
 
   python3 - "$PROJ_DEST/index.md" "$PROJECT_SLUG" "$PROJECT_NAME" \
-            "$PROJECT_DESC" "$REPO_URL" "$HAS_DEMO" "$DESCRIPTION_MD" <<'PY'
-import sys, re
+            "$PROJECT_DESC" "$REPO_URL" "$HAS_DEMO" "$DESCRIPTION_MD" "$META_FILE" <<'PY'
+import sys, re, json
 
-dest, slug, name, desc, github, has_demo, desc_md = sys.argv[1:]
+dest, slug, name, desc, github, has_demo, desc_md, meta_file = sys.argv[1:]
+
+tags = json.load(open(meta_file)).get('tags', [])
 
 body = ""
 try:
@@ -204,6 +206,16 @@ try:
         body = f.read().strip()
 except FileNotFoundError:
     body = desc
+
+# First non-empty paragraph for the card description
+card_desc = desc
+if body:
+    first_para = re.split(r'\n\n', body.lstrip('#').strip())[0].strip()
+    first_para = re.sub(r'[#*`]', '', first_para).replace('\n', ' ').strip()
+    if first_para:
+        card_desc = first_para.replace('"', '\\"')
+
+tags_yaml = ('tags: [' + ', '.join(tags) + ']') if tags else ''
 
 demo_link = f"- [Live Demo](/{slug}/)" if has_demo == "true" else ""
 github_link = f"- [GitHub]({github})"
@@ -215,6 +227,8 @@ frontmatter = f"""---
 layout: project-page.njk
 title: "{name}"
 slug: {slug}
+description: "{card_desc}"
+{tags_yaml}
 github: {github}
 has_demo: {has_demo}
 permalink: /projects/{slug}/
