@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-03-27T06:44:13.913017+00:00",
+  "generated_at": "2026-03-27T06:46:31.584509+00:00",
   "stats": {
     "total_sessions": 143,
     "total_projects": 71,
     "total_hours": 149.3,
-    "total_input_tokens": 82389,
-    "total_output_tokens": 3890806,
-    "total_cache_read_tokens": 638947421,
-    "total_cache_creation_tokens": 23417336,
+    "total_input_tokens": 82428,
+    "total_output_tokens": 3893967,
+    "total_cache_read_tokens": 640052725,
+    "total_cache_creation_tokens": 23441496,
     "date_range": {
       "start": "2026-02-20",
       "end": "2026-03-27"
@@ -47,8 +47,8 @@
     "peeq": {
       "sessions": 4,
       "hours": 2.8,
-      "input_tokens": 317,
-      "output_tokens": 88792
+      "input_tokens": 356,
+      "output_tokens": 91953
     },
     "fast-vj": {
       "sessions": 4,
@@ -570,21 +570,21 @@
       "session_id": "4e418cff-7e2a-4eaa-9e17-e4b1d2e4f26f",
       "session_id_short": "4e418cff",
       "start": "2026-03-27T06:41:25.433Z",
-      "end": "2026-03-27T06:44:13.398Z",
+      "end": "2026-03-27T06:46:31.126Z",
       "date": "2026-03-27",
-      "duration_minutes": 2,
+      "duration_minutes": 5,
       "cwd": "/home/dan/sandbox/dnewcome/peeq",
       "project_name": "peeq",
       "theme": "Other",
       "source": "claude",
       "repo_url": null,
       "first_prompt": "Ok I need to generate some devlog/ entries from my commit history here.",
-      "user_turns": 1,
-      "assistant_turns": 31,
-      "input_tokens": 35,
-      "output_tokens": 5604,
-      "cache_read_tokens": 683142,
-      "cache_creation_tokens": 41948
+      "user_turns": 2,
+      "assistant_turns": 62,
+      "input_tokens": 74,
+      "output_tokens": 8765,
+      "cache_read_tokens": 1788446,
+      "cache_creation_tokens": 66108
     },
     {
       "session_id": "1b85ec4c-10c5-4ad0-8aca-771b9d2e8a14",
