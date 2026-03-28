@@ -59,7 +59,7 @@
   {
     "slug": "trig-seq",
     "name": "trig-seq",
-    "description": "",
+    "description": "MIDI DJ deck sequencer \u2014 fixed playhead, scrolling piano roll, two decks, crossfader",
     "tags": [],
     "has_demo": false,
     "demo_files": [],

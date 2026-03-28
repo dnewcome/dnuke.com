@@ -72,11 +72,13 @@ import tomllib, json, sys
 toml_path, repo_url, fallback_slug = sys.argv[1], sys.argv[2], sys.argv[3]
 with open(toml_path, 'rb') as f:
     data = tomllib.load(f)
+# Support both flat TOML and nested [project] table
+p = data.get('project', {}) if isinstance(data.get('project'), dict) else {}
 out = {
-    'slug':        data.get('slug', fallback_slug),
-    'name':        data.get('name', fallback_slug),
-    'description': data.get('description', ''),
-    'tags':        data.get('tags', []),
+    'slug':        data.get('slug') or p.get('slug', fallback_slug),
+    'name':        data.get('name') or p.get('name', fallback_slug),
+    'description': data.get('description') or p.get('description', ''),
+    'tags':        data.get('tags') or p.get('tags', []),
     'has_demo':    'demo' in data,
     'demo_files':  data.get('demo', {}).get('files', []),
     'github':      repo_url,
