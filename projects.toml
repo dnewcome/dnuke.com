@@ -11,3 +11,6 @@ repo = "https://github.com/dnewcome/peeq"
 
 [[project]]
 repo = "https://github.com/dnewcome/mmt8"
+
+[[project]]
+repo = "https://github.com/dnewcome/trig-seq"

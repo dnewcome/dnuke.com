@@ -55,5 +55,14 @@
     "has_demo": false,
     "demo_files": [],
     "github": "https://github.com/dnewcome/mmt8"
+  },
+  {
+    "slug": "trig-seq",
+    "name": "trig-seq",
+    "description": "",
+    "tags": [],
+    "has_demo": false,
+    "demo_files": [],
+    "github": "https://github.com/dnewcome/trig-seq"
   }
 ]
