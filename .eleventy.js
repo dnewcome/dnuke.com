@@ -1,4 +1,65 @@
+const fs = require("fs");
+const path = require("path");
+
+function mergeSessionFiles() {
+  const sessionsDir = path.join(__dirname, "sessions");
+  const files = fs.readdirSync(sessionsDir).filter(f => f.endsWith(".json"));
+  if (files.length === 0) return;
+
+  const datasets = files.map(f => JSON.parse(fs.readFileSync(path.join(sessionsDir, f), "utf8")));
+
+  // Merge sessions array (each machine has unique session IDs)
+  const sessions = datasets.flatMap(d => d.sessions || []);
+
+  // Merge project_stats by summing per-project fields
+  const project_stats = {};
+  for (const d of datasets) {
+    for (const [proj, stats] of Object.entries(d.project_stats || {})) {
+      if (!project_stats[proj]) { project_stats[proj] = { ...stats }; continue; }
+      for (const [k, v] of Object.entries(stats)) {
+        project_stats[proj][k] = (project_stats[proj][k] || 0) + v;
+      }
+    }
+  }
+
+  // Merge sessions_by_day (array of {date, count}) by summing counts per date
+  const sbdMap = {};
+  for (const d of datasets) {
+    for (const entry of (d.sessions_by_day || [])) {
+      sbdMap[entry.date] = (sbdMap[entry.date] || 0) + entry.count;
+    }
+  }
+  const sessions_by_day = Object.entries(sbdMap)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([date, count]) => ({ date, count }));
+
+  // Merge themes by summing counts
+  const themes = {};
+  for (const d of datasets) {
+    for (const [theme, count] of Object.entries(d.themes || {})) {
+      themes[theme] = (themes[theme] || 0) + count;
+    }
+  }
+
+  // Sum top-level stats; total_projects is unique project count
+  const stats = {
+    total_sessions: sessions.length,
+    total_projects: Object.keys(project_stats).length,
+  };
+  for (const key of ["total_hours", "total_input_tokens", "total_output_tokens", "total_cache_read_tokens", "total_cache_creation_tokens"]) {
+    stats[key] = datasets.reduce((sum, d) => sum + (d.stats?.[key] || 0), 0);
+  }
+  const allDates = sessions.map(s => s.date).filter(Boolean).sort();
+  stats.date_range = { start: allDates[0] || null, end: allDates[allDates.length - 1] || null };
+
+  const generated_at = datasets.map(d => d.generated_at).sort().at(-1);
+
+  const merged = { generated_at, stats, project_stats, themes, sessions_by_day, sessions };
+  fs.writeFileSync(path.join(__dirname, "sessions-data.json"), JSON.stringify(merged, null, 2));
+}
+
 module.exports = function(eleventyConfig) {
+  eleventyConfig.on("eleventy.before", mergeSessionFiles);
   eleventyConfig.addPassthroughCopy("src/css");
   eleventyConfig.addPassthroughCopy("src/images");
   eleventyConfig.addPassthroughCopy("src/files");
