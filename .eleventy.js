@@ -47,7 +47,7 @@ function mergeSessionFiles() {
     total_sessions: sessions.length,
     total_projects: Object.keys(project_stats).length,
   };
-  for (const key of ["total_hours", "total_input_tokens", "total_output_tokens", "total_cache_read_tokens", "total_cache_creation_tokens"]) {
+  for (const key of ["total_hours", "total_loc", "total_lines_added", "total_lines_deleted", "total_input_tokens", "total_output_tokens", "total_cache_read_tokens", "total_cache_creation_tokens"]) {
     stats[key] = datasets.reduce((sum, d) => sum + (d.stats?.[key] || 0), 0);
   }
   const allDates = sessions.map(s => s.date).filter(Boolean).sort();
