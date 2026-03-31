@@ -563,10 +563,13 @@ function showDetailView(projectName) {
   badge.style.background = `${color}22`;
   badge.style.color = color;
 
-  const totalHours = sessions.reduce((a, s) => a + (s.duration_minutes || 0), 0) / 60;
-  const totalIn    = sessions.reduce((a, s) => a + (s.input_tokens || 0), 0);
-  const totalOut   = sessions.reduce((a, s) => a + (s.output_tokens || 0), 0);
-  const totalCache = sessions.reduce((a, s) => a + (s.cache_read_tokens || 0), 0);
+  const totalHours   = sessions.reduce((a, s) => a + (s.duration_minutes || 0), 0) / 60;
+  const totalIn      = sessions.reduce((a, s) => a + (s.input_tokens || 0), 0);
+  const totalOut     = sessions.reduce((a, s) => a + (s.output_tokens || 0), 0);
+  const totalCache   = sessions.reduce((a, s) => a + (s.cache_read_tokens || 0), 0);
+  const totalAdded   = sessions.reduce((a, s) => a + (s.lines_added || 0), 0);
+  const totalDeleted = sessions.reduce((a, s) => a + (s.lines_deleted || 0), 0);
+  const loc          = window._projectStats?.[projectName]?.loc || 0;
 
   document.getElementById("detail-meta").textContent =
     `${sessions.length} session${sessions.length !== 1 ? "s" : ""}`;
@@ -576,6 +579,18 @@ function showDetailView(projectName) {
       <span class="detail-stat-value">${totalHours.toFixed(1)}h</span>
       <span class="detail-stat-label">Hours</span>
     </div>
+    ${totalAdded ? `<div class="detail-stat">
+      <span class="detail-stat-value" style="color:#4ade80">+${fmtLoc(totalAdded)}</span>
+      <span class="detail-stat-label">Lines Added</span>
+    </div>` : ""}
+    ${totalDeleted ? `<div class="detail-stat">
+      <span class="detail-stat-value" style="color:#f87171">-${fmtLoc(totalDeleted)}</span>
+      <span class="detail-stat-label">Lines Deleted</span>
+    </div>` : ""}
+    ${loc ? `<div class="detail-stat">
+      <span class="detail-stat-value">${fmtLoc(loc)}</span>
+      <span class="detail-stat-label">Total LOC</span>
+    </div>` : ""}
     <div class="detail-stat">
       <span class="detail-stat-value">${fmtTokens(totalIn)}</span>
       <span class="detail-stat-label">Input</span>
@@ -606,6 +621,8 @@ function showDetailView(projectName) {
         <div class="detail-card-header">
           <span class="detail-card-date">${s.date || ""}</span>
           ${dur ? `<span class="detail-card-dur">${dur}</span>` : ""}
+          ${s.lines_added ? `<span class="detail-card-dur" style="color:#4ade80">+${fmtLoc(s.lines_added)}</span>` : ""}
+          ${s.lines_deleted ? `<span class="detail-card-dur" style="color:#f87171">-${fmtLoc(s.lines_deleted)}</span>` : ""}
           <span class="detail-card-turns">${s.assistant_turns} turns</span>
         </div>
         <div class="detail-card-prompt">${esc(s.first_prompt)}</div>
@@ -645,6 +662,7 @@ function renderSessions(sessions) {
         <div class="session-right">
           <span class="theme-badge" style="background:${color}22;color:${color}">${s.theme}</span>
           <span class="session-turns">${s.assistant_turns} turns</span>
+          ${s.lines_added ? `<span class="session-turns" style="color:#4ade80">+${fmtLoc(s.lines_added)}</span>` : ""}
         </div>
       </div>`;
   }).join("");
@@ -763,12 +781,21 @@ function fmtTokens(n) {
   return `${n}`;
 }
 
+function fmtLoc(n) {
+  if (!n) return "0";
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(0)}k`;
+  return `${n}`;
+}
+
 function renderStats(sessions) {
   const count    = sessions.length;
   const projects = new Set(sessions.map(s => s.project_name)).size;
   const hours    = sessions.reduce((a, s) => a + (s.duration_minutes || 0), 0) / 60;
   const inputTok = sessions.reduce((a, s) => a + (s.input_tokens || 0), 0);
   const outTok   = sessions.reduce((a, s) => a + (s.output_tokens || 0), 0);
+
+  const linesAdded   = sessions.reduce((a, s) => a + (s.lines_added || 0), 0);
 
   document.getElementById("stats-bar").innerHTML = `
     <div class="stat">
@@ -782,6 +809,10 @@ function renderStats(sessions) {
     <div class="stat">
       <span class="stat-value">${hours.toFixed(1)}h</span>
       <span class="stat-label">Hours</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value" style="color:#4ade80">+${fmtLoc(linesAdded)}</span>
+      <span class="stat-label">Lines Added</span>
     </div>
     <div class="stat">
       <span class="stat-value">${fmtTokens(inputTok)}</span>
@@ -863,6 +894,7 @@ fetch("sessions-data.json")
   .then(r => r.json())
   .then(data => {
     allSessions = data.sessions;
+    window._projectStats = data.project_stats || {};
     buildHeatmap(data.sessions_by_day);
     buildThemeBars(data.themes);
     buildProjectList(data.sessions);
