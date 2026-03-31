@@ -511,6 +511,15 @@ const THEME_COLORS = {
   "Other":                  "var(--c-other)",
 };
 
+// Energy estimates per million tokens (kWh)
+// Sources: "From Prompts to Power" (2025) arxiv.org/abs/2511.05597,
+//          Epoch AI GPT-4o estimates (2025) epoch.ai/gradient-updates/how-much-energy-does-chatgpt-use
+// Rough proxies — actual values vary significantly by hardware/infrastructure.
+const KWH_PER_M_OUTPUT        = 0.278;  // ~1.0 J/token, autoregressive decode phase
+const KWH_PER_M_INPUT         = 0.025;  // ~11x cheaper than output, parallel prefill
+const KWH_PER_M_CACHE_CREATE  = 0.025;  // similar to input (computing KV pairs)
+const KWH_PER_M_CACHE_READ    = 0.003;  // ~100x cheaper than output, memory I/O only
+
 let state = { theme: null, date: null, project: null, search: "" };
 let allSessions = [];
 
@@ -573,6 +582,7 @@ function showDetailView(projectName) {
   const totalAdded   = sessions.reduce((a, s) => a + (s.lines_added || 0), 0);
   const totalDeleted = sessions.reduce((a, s) => a + (s.lines_deleted || 0), 0);
   const loc          = window._projectStats?.[projectName]?.loc || 0;
+  const projKwh      = estimateKwh(sessions);
 
   document.getElementById("detail-meta").textContent =
     `${sessions.length} session${sessions.length !== 1 ? "s" : ""}`;
@@ -605,6 +615,10 @@ function showDetailView(projectName) {
     <div class="detail-stat">
       <span class="detail-stat-value">${fmtTokens(totalCache)}</span>
       <span class="detail-stat-label">Cache Read</span>
+    </div>
+    <div class="detail-stat">
+      <span class="detail-stat-value" style="color:#fb923c" title="Rough estimate based on published LLM inference benchmarks">~${fmtKwh(projKwh)}</span>
+      <span class="detail-stat-label">Est. Energy</span>
     </div>`;
 
   const repoUrl = sessions.find(s => s.repo_url)?.repo_url;
@@ -791,6 +805,23 @@ function fmtLoc(n) {
   return `${n}`;
 }
 
+function estimateKwh(sessions) {
+  const out   = sessions.reduce((a, s) => a + (s.output_tokens          || 0), 0);
+  const inp   = sessions.reduce((a, s) => a + (s.input_tokens           || 0), 0);
+  const ccr   = sessions.reduce((a, s) => a + (s.cache_creation_tokens  || 0), 0);
+  const crd   = sessions.reduce((a, s) => a + (s.cache_read_tokens      || 0), 0);
+  return (out  * KWH_PER_M_OUTPUT       +
+          inp  * KWH_PER_M_INPUT        +
+          ccr  * KWH_PER_M_CACHE_CREATE +
+          crd  * KWH_PER_M_CACHE_READ) / 1_000_000;
+}
+
+function fmtKwh(kwh) {
+  if (kwh < 0.001) return `${(kwh * 1000).toFixed(2)} Wh`;
+  if (kwh < 1)     return `${kwh.toFixed(3)} kWh`;
+  return `${kwh.toFixed(2)} kWh`;
+}
+
 function renderStats(sessions) {
   const count    = sessions.length;
   const projects = new Set(sessions.map(s => s.project_name)).size;
@@ -799,6 +830,7 @@ function renderStats(sessions) {
   const outTok   = sessions.reduce((a, s) => a + (s.output_tokens || 0), 0);
 
   const linesAdded = sessions.reduce((a, s) => a + (s.lines_added || 0), 0);
+  const kwh        = estimateKwh(sessions);
 
   const sinceDate = state.date
     ? state.date
@@ -828,6 +860,10 @@ function renderStats(sessions) {
     <div class="stat">
       <span class="stat-value">${fmtTokens(outTok)}</span>
       <span class="stat-label">Output Tokens</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value" style="color:#fb923c" title="Rough estimate based on published LLM inference benchmarks">~${fmtKwh(kwh)}</span>
+      <span class="stat-label">Est. Energy</span>
     </div>
     ${sinceDate ? `<div class="stat-since">
       <span class="stat-since-value">${sinceDate}</span>
