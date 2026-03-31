@@ -1,0 +1,29 @@
+---
+layout: base.njk
+title: "dnuke.com — Devlog"
+project: dnuke-com
+project_name: dnuke.com
+permalink: /devlog/dnuke-com/
+---
+<div class="blog-container">
+  <div class="post-meta" style="margin-bottom:8px;">
+    <a href="/devlog/">← All devlog entries</a>
+  </div>
+  <div class="page-title">dnuke.com</div>
+  <p style="color:#888; font-size:14px; margin-bottom:32px;">
+    Build log for this site itself — devlog pipeline, dashboard, tooling.
+  </p>
+  <ul class="post-list">
+    {%- for post in collections.devlog %}
+      {%- if post.data.project == "dnuke-com" %}
+      <li class="post-item">
+        <div class="post-meta">{{ post.date | dateFormat }}</div>
+        <div class="post-title"><a href="{{ post.url }}">{{ post.data.title }}</a></div>
+        {%- if post.templateContent %}
+        <div class="post-excerpt">{{ post.templateContent | excerpt }}</div>
+        {%- endif %}
+      </li>
+      {%- endif %}
+    {%- endfor %}
+  </ul>
+</div>
