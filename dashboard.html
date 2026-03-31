@@ -100,10 +100,13 @@
 
     .clear-btn:hover { border-color: var(--muted); color: var(--text); }
 
-    .stats-bar { display: flex; gap: 28px; }
+    .stats-bar { display: flex; gap: 28px; align-items: flex-end; }
     .stat { display: flex; flex-direction: column; gap: 1px; }
     .stat-value { font-size: 20px; font-weight: 700; color: var(--text); }
     .stat-label { font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+    .stat-since { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
+    .stat-since-value { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .stat-since-label { font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.6; }
 
     /* ── LAYOUT ── */
     .layout {
@@ -795,7 +798,11 @@ function renderStats(sessions) {
   const inputTok = sessions.reduce((a, s) => a + (s.input_tokens || 0), 0);
   const outTok   = sessions.reduce((a, s) => a + (s.output_tokens || 0), 0);
 
-  const linesAdded   = sessions.reduce((a, s) => a + (s.lines_added || 0), 0);
+  const linesAdded = sessions.reduce((a, s) => a + (s.lines_added || 0), 0);
+
+  const sinceDate = state.date
+    ? state.date
+    : sessions.reduce((min, s) => (!min || s.date < min ? s.date : min), null);
 
   document.getElementById("stats-bar").innerHTML = `
     <div class="stat">
@@ -821,7 +828,11 @@ function renderStats(sessions) {
     <div class="stat">
       <span class="stat-value">${fmtTokens(outTok)}</span>
       <span class="stat-label">Output Tokens</span>
-    </div>`;
+    </div>
+    ${sinceDate ? `<div class="stat-since">
+      <span class="stat-since-value">${sinceDate}</span>
+      <span class="stat-since-label">Since</span>
+    </div>` : ""}`;
 }
 
 function renderActiveFilters() {
