@@ -33,13 +33,14 @@ function mergeSessionFiles() {
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([date, count]) => ({ date, count }));
 
-  // Merge themes by summing counts
-  const themes = {};
+  // Merge themes by summing counts (themes is array of {name, count})
+  const themesMap = {};
   for (const d of datasets) {
-    for (const [theme, count] of Object.entries(d.themes || {})) {
-      themes[theme] = (themes[theme] || 0) + count;
+    for (const entry of (d.themes || [])) {
+      themesMap[entry.name] = (themesMap[entry.name] || 0) + entry.count;
     }
   }
+  const themes = Object.entries(themesMap).map(([name, count]) => ({ name, count }));
 
   // Sum top-level stats; total_projects is unique project count
   const stats = {
