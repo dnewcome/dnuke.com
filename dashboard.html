@@ -525,10 +525,16 @@ let allSessions = [];
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
+function localDate(isoStr) {
+  if (!isoStr) return null;
+  const d = new Date(isoStr);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
 function applyFilters() {
   return allSessions.filter(s => {
     if (state.theme   && s.theme        !== state.theme)   return false;
-    if (state.date    && s.date         !== state.date)    return false;
+    if (state.date    && s.local_date    !== state.date)    return false;
     if (state.project && s.project_name !== state.project) return false;
     if (state.search) {
       const q = state.search.toLowerCase();
@@ -636,7 +642,7 @@ function showDetailView(projectName) {
     return `
       <div class="detail-card">
         <div class="detail-card-header">
-          <span class="detail-card-date">${s.date || ""}</span>
+          <span class="detail-card-date">${s.local_date || ""}</span>
           ${dur ? `<span class="detail-card-dur">${dur}</span>` : ""}
           ${s.lines_added ? `<span class="detail-card-dur" style="color:#4ade80">+${fmtLoc(s.lines_added)}</span>` : ""}
           ${s.lines_deleted ? `<span class="detail-card-dur" style="color:#f87171">-${fmtLoc(s.lines_deleted)}</span>` : ""}
@@ -669,7 +675,7 @@ function renderSessions(sessions) {
     return `
       <div class="session-card" data-project="${esc(s.project_name)}">
         <div class="session-meta">
-          <span class="session-date">${s.date || ""}</span>
+          <span class="session-date">${s.local_date || ""}</span>
           <span class="session-project">${esc(s.project_name)}</span>
           ${dur ? `<span class="session-duration">${dur}</span>` : ""}
         </div>
@@ -717,9 +723,10 @@ function buildHeatmap(byDay) {
     return 4;
   }
 
-  const firstDate = new Date(byDay[0].date + "T00:00:00Z");
   const lastDate  = new Date(byDay[byDay.length - 1].date + "T00:00:00Z");
-  const startDay  = new Date(firstDate);
+  const cutoff    = new Date(lastDate);
+  cutoff.setUTCDate(cutoff.getUTCDate() - 60);
+  const startDay  = new Date(cutoff);
   startDay.setUTCDate(startDay.getUTCDate() - startDay.getUTCDay());
 
   const dayMap = Object.fromEntries(byDay.map(d => [d.date, d.count]));
@@ -729,10 +736,20 @@ function buildHeatmap(byDay) {
     cells.push({ date: ds, count: dayMap[ds] || 0 });
   }
 
-  el.innerHTML = cells.map(({ date, count }) =>
-    `<div class="heatmap-cell heatmap-level-${level(count)}"
-          data-date="${date}"
-          title="${date}: ${count} session${count !== 1 ? "s" : ""}"></div>`
+  // Split into weeks (Sun→Sat), pad the last partial week, then reverse so
+  // newest week is first. Sunday stays in column 0.
+  const tail = lastDate.getUTCDay();
+  const padded = [...cells, ...Array(tail === 6 ? 0 : 6 - tail).fill(null)];
+  const weeks = [];
+  for (let i = 0; i < padded.length; i += 7) weeks.push(padded.slice(i, i + 7));
+  weeks.reverse();
+
+  el.innerHTML = weeks.flat().map(cell =>
+    cell
+      ? `<div class="heatmap-cell heatmap-level-${level(cell.count)}"
+              data-date="${cell.date}"
+              title="${cell.date}: ${cell.count} session${cell.count !== 1 ? "s" : ""}"></div>`
+      : `<div class="heatmap-cell heatmap-level-0"></div>`
   ).join("");
 
   el.querySelectorAll(".heatmap-cell").forEach(cell =>
@@ -834,7 +851,7 @@ function renderStats(sessions) {
 
   const sinceDate = state.date
     ? state.date
-    : sessions.reduce((min, s) => (!min || s.date < min ? s.date : min), null);
+    : sessions.reduce((min, s) => (!min || s.local_date < min ? s.local_date : min), null);
 
   document.getElementById("stats-bar").innerHTML = `
     <div class="stat">
@@ -935,14 +952,97 @@ document.getElementById("search").addEventListener("input", e => {
   refresh();
 });
 
+// ── merge helpers ─────────────────────────────────────────────────────────────
+
+function mergeData(datasets) {
+  const sessions = [];
+  const seenIds = new Set();
+  const byDay = {};
+  const byTheme = {};
+  const projectStats = {};
+  const stats = {
+    total_sessions: 0, total_projects: 0, total_hours: 0,
+    total_loc: 0, total_lines_added: 0, total_lines_deleted: 0,
+    total_input_tokens: 0, total_output_tokens: 0,
+    total_cache_read_tokens: 0, total_cache_creation_tokens: 0,
+    date_range: { start: null, end: null },
+  };
+
+  for (const data of datasets) {
+    // sessions — deduplicate by session_id
+    for (const s of (data.sessions || [])) {
+      if (!seenIds.has(s.session_id)) {
+        seenIds.add(s.session_id);
+        sessions.push(s);
+      }
+    }
+
+    // sessions_by_day — sum counts
+    for (const { date, count } of (data.sessions_by_day || [])) {
+      byDay[date] = (byDay[date] || 0) + count;
+    }
+
+    // themes — sum counts
+    for (const { name, count } of (data.themes || [])) {
+      byTheme[name] = (byTheme[name] || 0) + count;
+    }
+
+    // project_stats — merge
+    for (const [name, ps] of Object.entries(data.project_stats || {})) {
+      if (!projectStats[name]) {
+        projectStats[name] = { ...ps };
+      } else {
+        for (const k of Object.keys(ps)) {
+          if (typeof ps[k] === "number") projectStats[name][k] = (projectStats[name][k] || 0) + ps[k];
+        }
+      }
+    }
+
+    // stats — sum numerics, union date range
+    const s = data.stats || {};
+    stats.total_sessions      += s.total_sessions      || 0;
+    stats.total_hours         += s.total_hours         || 0;
+    stats.total_loc           += s.total_loc           || 0;
+    stats.total_lines_added   += s.total_lines_added   || 0;
+    stats.total_lines_deleted += s.total_lines_deleted || 0;
+    stats.total_input_tokens  += s.total_input_tokens  || 0;
+    stats.total_output_tokens += s.total_output_tokens || 0;
+    stats.total_cache_read_tokens    += s.total_cache_read_tokens    || 0;
+    stats.total_cache_creation_tokens += s.total_cache_creation_tokens || 0;
+    const dr = s.date_range || {};
+    if (dr.start && (!stats.date_range.start || dr.start < stats.date_range.start)) stats.date_range.start = dr.start;
+    if (dr.end   && (!stats.date_range.end   || dr.end   > stats.date_range.end))   stats.date_range.end   = dr.end;
+  }
+
+  stats.total_projects = Object.keys(projectStats).length;
+
+  return {
+    sessions,
+    sessions_by_day: Object.entries(byDay).map(([date, count]) => ({ date, count })).sort((a,b) => a.date.localeCompare(b.date)),
+    themes: Object.entries(byTheme).map(([name, count]) => ({ name, count })),
+    project_stats: projectStats,
+    stats,
+  };
+}
+
 // ── load ─────────────────────────────────────────────────────────────────────
 
-fetch("sessions-data.json")
+fetch("sessions/manifest.json")
   .then(r => r.json())
-  .then(data => {
+  .then(({ files }) => Promise.all(
+    files.map(f => fetch(`sessions/${f}`).then(r => r.json()))
+  ))
+  .then(datasets => {
+    const data = mergeData(datasets);
+    // Annotate each session with a local-timezone date for display/filtering.
+    data.sessions.forEach(s => { s.local_date = localDate(s.start); });
+    // Rebuild sessions_by_day from local dates.
+    const localByDay = {};
+    data.sessions.forEach(s => { if (s.local_date) localByDay[s.local_date] = (localByDay[s.local_date] || 0) + 1; });
+    const localSessionsByDay = Object.entries(localByDay).map(([date, count]) => ({ date, count })).sort((a,b) => a.date.localeCompare(b.date));
     allSessions = data.sessions;
     window._projectStats = data.project_stats || {};
-    buildHeatmap(data.sessions_by_day);
+    buildHeatmap(localSessionsByDay);
     buildThemeBars(data.themes);
     buildProjectList(data.sessions);
     buildFilterChips();
@@ -951,8 +1051,8 @@ fetch("sessions-data.json")
   .catch(() => {
     document.getElementById("session-list").innerHTML = `
       <div class="empty-state">
-        Could not load sessions-data.json<br><br>
-        python3 sessions.py json -o sessions-data.json<br>
+        Could not load session data<br><br>
+        make build &amp;&amp; make manifest<br>
         python3 -m http.server 8080
       </div>`;
   });
