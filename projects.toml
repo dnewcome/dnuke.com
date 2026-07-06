@@ -1,7 +1,15 @@
-## dnuke.com project registry
-## Each [[project]] entry is synced on build:
-##   - devlog entries → src/devlog/<slug>/
-##   - demo files     → src/<slug>/  (if [demo] in .project.toml)
+## dnuke.com imported-project registry — used ONLY by the optional bulk importer.
+##
+## The live publish path is PUSH, not pull: each project publishes its own devlog
+## entries into this repo via scripts/devpublish.sh (see docs/PIPELINE.md), and
+## dnuke.com's build just renders the committed result. Nothing here runs on build.
+##
+## scripts/sync-projects.sh (`npm run sync`) reads this list to BULK-IMPORT a
+## public project's existing devlog/ + landing page in one shot — handy when first
+## onboarding a project with backlog. Caveats: it clones each repo, and it
+## OVERWRITES generated pages, so don't run it against a project whose landing
+## page you've hand-tuned (it'll clobber your prose). Private repos can't be
+## imported this way (no CI clone creds) — publish them with devpublish instead.
 
 [[project]]
 repo = "https://github.com/dnewcome/threequencer"
@@ -14,3 +22,6 @@ repo = "https://github.com/dnewcome/mmt8"
 
 [[project]]
 repo = "https://github.com/dnewcome/trig-seq"
+
+[[project]]
+repo = "https://github.com/dnewcome/fast-vj"
