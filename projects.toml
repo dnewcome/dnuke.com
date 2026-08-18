@@ -12,7 +12,7 @@
 ## imported this way (no CI clone creds) — publish them with devpublish instead.
 
 [[project]]
-repo = "https://github.com/dnewcome/threequencer"
+repo = "https://github.com/audiodestrukt/threequencer"
 
 [[project]]
 repo = "https://github.com/dnewcome/peeq"
