@@ -15,7 +15,7 @@
 repo = "https://github.com/audiodestrukt/threequencer"
 
 [[project]]
-repo = "https://github.com/dnewcome/peeq"
+repo = "https://github.com/audiodestrukt/peeq"
 
 [[project]]
 repo = "https://github.com/dnewcome/mmt8"
