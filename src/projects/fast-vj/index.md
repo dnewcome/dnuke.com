@@ -4,7 +4,7 @@ title: "fast-vj"
 slug: fast-vj
 description: "Realtime VJ sampler for live performance — GPU shader effects, OSC control, and LuaJIT scripting on Raspberry Pi 4 at 60fps."
 tags: [video, performance, opengl, lua, osc, raspberry-pi, c]
-github: "https://github.com/dnewcome/fast-vj"
+github: "https://github.com/pixeldestrukt/fast-vj"
 has_demo: false
 permalink: /projects/fast-vj/
 ---
@@ -19,5 +19,5 @@ Included shaders: default oscilloscope/FFT overlay, spectrum visualizer, glowing
 
 There is an experimental WebAssembly port that runs in the browser via Emscripten, with OSC bridged over WebSocket. It works but has an unresolved slowdown over time — it lives on the `wasm-port` branch and isn't merged into main.
 
-- [GitHub](https://github.com/dnewcome/fast-vj)
+- [GitHub](https://github.com/pixeldestrukt/fast-vj)
 - [Devlog](/devlog/fast-vj/)
