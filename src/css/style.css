@@ -579,6 +579,41 @@ nav ul li a.active { color: var(--accent); }
   border: 1px solid var(--border);
 }
 
+/* Markdown tables. The global reset strips cell padding, so every table
+   needs these. display:block lets a wide table scroll sideways inside the
+   780px column instead of pushing the page wider. Numeric columns are
+   right-aligned from the Markdown (---:), which markdown-it emits inline. */
+.post-body table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  margin: 1.5rem 0 1.75rem;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--text);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.post-body th, .post-body td {
+  padding: 0.5rem 0.9rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.post-body th {
+  color: var(--white);
+  font-weight: 700;
+  text-align: left;
+  border-bottom-color: var(--muted);
+  vertical-align: bottom;
+}
+
+.post-body tbody tr:last-child td { border-bottom: none; }
+
+.post-body th:first-child, .post-body td:first-child { padding-left: 0; }
+
 .post-nav {
   display: flex;
   justify-content: space-between;

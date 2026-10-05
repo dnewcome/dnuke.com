@@ -30,7 +30,7 @@ Curiate is an art marketplace and gallery tool. It's a Go API, a Flutter app tha
 ## What scc counted
 
 | Language | Files | Code lines |
-|---|---|---|
+|---|---:|---:|
 | Go | 143 | 24,738 |
 | Dart | 149 | 24,239 |
 | Markdown | 90 | 10,548 |
@@ -60,7 +60,7 @@ scc's defaults are a $56,286 salary and a 2.4x overhead multiplier. For 66,699 l
 **Cleaning up the input doesn't rescue the number.** My first thought was that counting Markdown and tests as code was inflating it. It is, but not by enough to matter:
 
 | What gets counted | Lines | Person-months | Cost |
-|---|---|---|---|
+|---|---:|---:|---:|
 | Everything scc found | 66,699 | 198 | $2.22M |
 | Without Markdown | 56,151 | 165 | $1.86M |
 | Without Markdown or tests | 45,301 | 132 | $1.48M |
@@ -73,7 +73,7 @@ The strictest reading still says a seven-person team for fifteen months.
 **I estimated my hours from commit timestamps.** Sort every commit by time, and split them into work sessions wherever the gap between two commits is longer than a threshold. A session is its last commit minus its first, plus a fixed lead-in for the work that happened before the first commit. The answer moves with both knobs, so here is the whole table rather than one number:
 
 | Gap that ends a session | Lead-in | Sessions | Hours |
-|---|---|---|---|
+|---|---:|---:|---:|
 | 1 h | 30 min | 93 | 114 |
 | 2 h | 30 min | 71 | 133 |
 | 2 h | 60 min | 71 | 169 |
@@ -91,7 +91,7 @@ The same logs say what my side of those hours looked like: 978 prompts, with a m
 The top chart is the scc count at the last commit of each week. The bottom one is the hours estimate by month. Put together:
 
 | Month | Hours | Net new code lines | Lines per hour |
-|---|---|---|---|
+|---|---:|---:|---:|
 | Feb–Mar | 4.0 | 11,639 at first count | |
 | April | 53.8 | 17,978 | 334 |
 | June | 34.5 | 13,566 | 393 |
@@ -139,16 +139,16 @@ I don't believe Curiate would have cost $2.2M before, and I can't prove what it 
 
 **One project is an anecdote, so I turned the measurement into a tool.** It's a Claude Code skill I'm calling effort-ledger. One script runs the same four instruments with the same settings on any repo: scc size, the COCOMO figure for that size, hours from commit sessions, and hours, prompts and tokens from the agent's transcripts. Each run is appended to a ledger so projects can be put side by side. Every number in this post comes from it. Here are four of my projects on the same ruler:
 
-| Project | Product lines | Hours (range) | Active days | Product lines per hour | COCOMO ÷ measured | Prompts | Tokens at list |
-|---|---|---|---|---|---|---|---|
-| Curiate | 44,339 | 151 (114–189) | 46 | 293 | 199x | 978 | $1,705 |
-| This site | 3,583 | 26 (19–34) | 22 | 138 | 385x | 105 | $23 |
-| circuit-decimator, an audio plugin | 13,178 | 10 (6–14) | 5 | 1,292 | 837x | 87 | $186 |
-| A private automation tool | 3,589 | 34 (24–46) | 13 | 106 | 70x | 214 | $374 |
+| Project | Product lines | Hours (range) | Lines per hour | COCOMO ÷ measured | Tokens at list |
+|---|---:|---:|---:|---:|---:|
+| Curiate | 44,339 | 151&nbsp;(114–&#8288;189) | 293 | 199x | $1,705 |
+| This site | 3,583 | 26&nbsp;(19–&#8288;34) | 138 | 385x | $23 |
+| circuit&#8209;decimator | 13,178 | 10&nbsp;(6–&#8288;14) | 1,292 | 837x | $186 |
+| A private tool | 3,589 | 34&nbsp;(24–&#8288;46) | 106 | 70x | $374 |
 
-"Product lines" leaves out docs, tests and config, which is the least misleading size I've found. The COCOMO ratio still uses everything scc counts, the way scc does.
+"Product lines" leaves out docs, tests and config, which is the least misleading size I've found, and the per-hour rate uses it. The COCOMO ratio still uses everything scc counts, the way scc does.
 
-**The spread is the lesson.** The gap runs from 70x to 837x, and most of that spread says more about the ruler than about the projects. This site scores 385x because COCOMO prices 13,000 lines of blog posts as software. circuit-decimator's 1,292 lines per hour is five days of work on a repo whose first commit already held 14% of the code, which is too little data to mean anything. None of these rows is a productivity number. The whole exercise is a little fake, and I'd rather have a table that shows it than a single figure that hides it. What the ledger gives me is the same proxies, taken the same way, every time.
+**The spread is the lesson.** The gap runs from 70x to 837x, and most of that spread says more about the ruler than about the projects. This site scores 385x because COCOMO prices 13,000 lines of blog posts as software. circuit-decimator is an audio plugin, and its 1,292 lines per hour is five days of work on a repo whose first commit already held 14% of the code, which is too little data to mean anything. None of these rows is a productivity number. The whole exercise is a little fake, and I'd rather have a table that shows it than a single figure that hides it. What the ledger gives me is the same proxies, taken the same way, every time.
 
 **Building the tool also corrected this post.** My first pass was done by hand, and it had three wrong numbers in it:
 
