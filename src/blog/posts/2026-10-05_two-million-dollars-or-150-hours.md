@@ -1,6 +1,9 @@
 ---
 title: "scc says Curiate is a $2.2M project. The git log says 150 hours."
 date: 2026-10-05
+description: "scc's COCOMO estimate puts Curiate at $2.2M and 30,000 hours. Commit timestamps and Claude Code transcripts say about 150 hours. Where the gap comes from and why the model breaks."
+image: /images/2026-10-05_two-million-dollars-or-150-hours_growth.png
+imageAlt: "Curiate's code size by language from February to September 2026, above estimated hours per month"
 tags:
   - posts
   - curiate
