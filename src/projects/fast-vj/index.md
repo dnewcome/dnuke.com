@@ -6,6 +6,7 @@ description: "Realtime VJ sampler for live performance — GPU shader effects, O
 tags: [video, performance, opengl, lua, osc, raspberry-pi, c]
 github: "https://github.com/pixeldestrukt/fast-vj"
 has_demo: false
+has_devlog: true
 permalink: /projects/fast-vj/
 ---
 

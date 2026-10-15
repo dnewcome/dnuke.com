@@ -1,0 +1,42 @@
+---
+layout: base.njk
+title: Projects
+permalink: /projects/
+---
+<section class="section" id="projects">
+  <div class="section-label">Work</div>
+  <h2>Projects</h2>
+  <p style="color:#888; font-size:14px; margin:-8px 0 24px;">
+    Hardware, robotics, PCBs, music tools, art installations, AI, and research — newest and favorites first.
+  </p>
+  <div class="project-grid">
+    {% for project in collections.projects %}
+    <div class="project-card">
+      <div class="project-name">
+        <a href="{{ project.url }}">{{ project.data.title }}</a>
+      </div>
+      <div class="project-desc">{{ project.data.description }}</div>
+      {% if project.data.tags.length > 0 %}
+      <div class="project-tags">
+        {% for tag in project.data.tags %}
+        <span class="tag">{{ tag }}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+      <div class="project-links">
+        {% if project.data.demo_url %}
+        <a href="{{ project.data.demo_url }}">Demo &rarr;</a>
+        {% elif project.data.has_demo %}
+        <a href="/{{ project.data.slug }}/">Demo &rarr;</a>
+        {% endif %}
+        {% if project.data.github %}
+        <a href="{{ project.data.github }}">GitHub &rarr;</a>
+        {% endif %}
+        {% if project.data.has_devlog %}
+        <a href="/devlog/{{ project.data.slug }}/">Devlog &rarr;</a>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>

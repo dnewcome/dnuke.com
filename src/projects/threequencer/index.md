@@ -6,6 +6,7 @@ description: "A 3D step sequencer running in the browser. 16 steps, 16 pitches, 
 tags: [music, sequencer, webgl, three.js, creative-code, browser]
 github: https://github.com/dnewcome/threequencer
 has_demo: true
+has_devlog: true
 permalink: /projects/threequencer/
 ---
 

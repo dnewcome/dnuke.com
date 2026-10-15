@@ -84,9 +84,24 @@ module.exports = function(eleventyConfig) {
       .sort((a, b) => b.date - a.date);
   });
 
-  // All projects (synced + static) — drives home page cards
+  // All projects (synced + static) — sorted by `order` (asc), then title.
+  // Drives the /projects/ index page.
+  const byOrderThenTitle = (a, b) => {
+    const ao = a.data.order ?? 999, bo = b.data.order ?? 999;
+    if (ao !== bo) return ao - bo;
+    return (a.data.title || "").localeCompare(b.data.title || "");
+  };
   eleventyConfig.addCollection("projects", function(collectionApi) {
-    return collectionApi.getFilteredByGlob("src/projects/*/index.md");
+    return collectionApi.getFilteredByGlob("src/projects/*/index.md")
+      .sort(byOrderThenTitle);
+  });
+
+  // Featured subset — drives the home-page cards. Set `featured: true` in a
+  // project's front matter and `order:` to position it.
+  eleventyConfig.addCollection("featuredProjects", function(collectionApi) {
+    return collectionApi.getFilteredByGlob("src/projects/*/index.md")
+      .filter(p => p.data.featured)
+      .sort(byOrderThenTitle);
   });
 
   // One entry per devlog project (for per-project index pages)

@@ -6,6 +6,7 @@ description: "Reverse engineering and porting of the Alesis MMT-8 MIDI sequencer
 tags: [embedded, 8051, reverse-engineering, MIDI, C, firmware, Ghidra]
 github: https://github.com/dnewcome/mmt8
 has_demo: false
+has_devlog: true
 permalink: /projects/mmt8/
 ---
 

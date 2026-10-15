@@ -29,8 +29,11 @@ Key points that are easy to get wrong:
   and it **overwrites** hand-tuned landing pages. Don't wire it into `npm run build`.
 - Private repos (curiate) and static projects publish via `devpublish` /
   `/add-project` — they can't be pulled.
-- Landing-page cards on the home page come from `src/projects/<slug>/index.md`
-  (`collections.projects`), created with `/add-project`. `devpublish` only writes devlog.
+- Landing-page cards come from `src/projects/<slug>/index.md`, created with `/add-project`.
+  `devpublish` only writes devlog. The **home page** shows the `featured: true` subset
+  (`collections.featuredProjects`), ordered by `order:`; **`/projects/`** lists them all
+  (`collections.projects`, sorted by `order` then title). Front matter also supports
+  `demo_url` (external live demo) and `has_devlog` (gates the Devlog link so it doesn't 404).
 
 ## Publisher tooling (devlog-tools)
 

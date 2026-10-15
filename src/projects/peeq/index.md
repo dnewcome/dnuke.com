@@ -6,6 +6,7 @@ description: "A keyboard-driven live step sequencer originally written for Pure 
 tags: [music, sequencer, pure-data, live-performance, browser]
 github: https://github.com/dnewcome/peeq
 has_demo: true
+has_devlog: true
 permalink: /projects/peeq/
 ---
 

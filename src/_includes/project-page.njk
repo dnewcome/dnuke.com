@@ -6,8 +6,8 @@ layout: base.njk
     <div class="post-meta">
       <span class="section-label">Project</span>
       {% if github %}&mdash; <a href="{{ github }}">GitHub</a>{% endif %}
-      {% if has_demo %}&mdash; <a href="/{{ slug }}/">Live Demo</a>{% endif %}
-      &mdash; <a href="/devlog/{{ slug }}/">Devlog</a>
+      {% if demo_url %}&mdash; <a href="{{ demo_url }}">Live Demo</a>{% elif has_demo %}&mdash; <a href="/{{ slug }}/">Live Demo</a>{% endif %}
+      {% if has_devlog %}&mdash; <a href="/devlog/{{ slug }}/">Devlog</a>{% endif %}
     </div>
     <h1>{{ title }}</h1>
   </div>

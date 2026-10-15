@@ -6,6 +6,7 @@ description: "MIDI DJ deck sequencer — fixed playhead, scrolling piano roll, t
 
 github: https://github.com/dnewcome/trig-seq
 has_demo: false
+has_devlog: true
 permalink: /projects/trig-seq/
 ---
 
